@@ -35,5 +35,9 @@
         public static readonly Error InvalidStatusChangeOperationFromCancelledToPostponed = Error.Validation(
             code: "Event.InvalidStatusChange",
             description: "Cannot change status from  Cancelled to Postponed.");
+
+        public static readonly Error InvalidAmountOfSoldTickets = Error.Validation(
+            code: "Event.TicketsSoldAmountExceeded",
+            description: "Ticket sale exceeds venue capacity.");
     }
 }

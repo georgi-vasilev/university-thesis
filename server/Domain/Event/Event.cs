@@ -8,7 +8,7 @@
     {
         private readonly Guid _organizerId;
         private readonly HashSet<Ticket> _tickets = new HashSet<Ticket>();
-
+        public List<IDomainEvent> DomainEvents { get; } = new List<IDomainEvent>();
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Guid OrganizerId { get; private set; }
@@ -47,6 +47,16 @@
             }
 
             Status = newStatus;
+
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> ValidateTicketSale(int currentSoldTickets, int ticketsToSell)
+        {
+            if (currentSoldTickets + ticketsToSell > Venue.Capacity)
+            {
+                return EventErrors.InvalidAmountOfSoldTickets;
+            }
 
             return Result.Success;
         }
