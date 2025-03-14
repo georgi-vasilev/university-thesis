@@ -40,6 +40,10 @@
             code: "Event.CapacityExceeded",
             description: "Ticket sale exceeds venue capacity.");
 
+        public static readonly Error InvalidCapacity = Error.Validation(
+            code: "Event.InvalidCapacity",
+            description: "Invalid capacity amount.");
+
         public static readonly Error TicketAlreadyAdded = Error.Validation(
             code: "Event.TicketAdded",
             description: "Ticket already added.");

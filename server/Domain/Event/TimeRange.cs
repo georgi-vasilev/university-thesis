@@ -28,6 +28,39 @@
         {
             return Start < other.End && other.Start < End;
         }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as TimeRange);
+        }
+
+        public bool Equals(TimeRange other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+            return Start.Equals(other.Start) && End.Equals(other.End);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Start, End);
+        }
+
+        public static bool operator ==(TimeRange left, TimeRange right)
+        {
+            if (left is null)
+            {
+                return right is null;
+            }
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TimeRange left, TimeRange right)
+        {
+            return !(left == right);
+        }
     }
 
 }

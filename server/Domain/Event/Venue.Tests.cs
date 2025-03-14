@@ -19,7 +19,7 @@
                 .WithName("Springfield Convention Center")
                 .WithAddress(address.Value)
                 .WithCapacity(5000)
-                .WithType(VenueType.Indoor)
+                .WithType(VenueType.Club)
                 .Build();
 
             venue.IsError.Should().BeFalse();

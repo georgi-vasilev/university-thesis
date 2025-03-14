@@ -1,7 +1,7 @@
 ﻿namespace Domain.Event
 {
-    using Domain.Common;
-    using Domain.Event.Error;
+    using Common;
+    using Error;
     using ErrorOr;
 
     internal class Event
@@ -18,9 +18,14 @@
         public Guid VenueId { get; private set; }
         public EventStatus Status { get; private set; }
         public int Capacity { get; private set; }
+        public int TicketCount
+        {
+            get => this._ticketIds.Count;
+        }
 
         internal Event(
             string name,
+            string description,
             DateOnly date,
             TimeRange time,
             Guid venueId,
@@ -29,6 +34,7 @@
             Guid? id = null)
         {
             Name = name;
+            Description = description;
             Date = date;
             Time = time;
             VenueId = venueId;
