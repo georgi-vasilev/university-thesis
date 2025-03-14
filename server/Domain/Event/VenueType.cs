@@ -2,7 +2,9 @@
 {
     internal enum VenueType
     {
-        Indoor,
-        Outdoor
+        Bar,
+        Club,
+        ConcertHall,
+        Outdooor,
     }
 }

@@ -20,13 +20,13 @@
             code: "Event.InvalidDate",
             description: "Date cannot be default");
 
-        public static readonly Error InvalidDateValueError = Error.Validation(
+        public static readonly Error DateIsInThePastError = Error.Validation(
             code: "Event.InvalidDate",
-            description: "Invalid date!");
+            description: "The new date cannot be in the past!");
 
         public static readonly Error InvalidOrganizerIdValueError = Error.Validation(
-            code: "Event.InvalidOrganizerId",
-            description: "OrganizerId cannot be default");
+            code: "Event.InvalidHostId",
+            description: "Host cannot be default");
 
         public static readonly Error InvalidStatusChangeOperationFromCancelledToActive = Error.Validation(
             code: "Event.InvalidStatusChange",
@@ -36,8 +36,20 @@
             code: "Event.InvalidStatusChange",
             description: "Cannot change status from  Cancelled to Postponed.");
 
-        public static readonly Error InvalidAmountOfSoldTickets = Error.Validation(
-            code: "Event.TicketsSoldAmountExceeded",
+        public static readonly Error CapacityExceeded = Error.Validation(
+            code: "Event.CapacityExceeded",
             description: "Ticket sale exceeds venue capacity.");
+
+        public static readonly Error TicketAlreadyAdded = Error.Validation(
+            code: "Event.TicketAdded",
+            description: "Ticket already added.");
+
+        public static readonly Error InvalidDescription = Error.Validation(
+            code: "Event.InvalidDescription",
+            description: "Description cannot be null or empty.");
+
+        public static readonly Error InvalidName = Error.Validation(
+            code: "Event.InvalidName",
+            description: "Name cannot be null or empty.");
     }
 }

@@ -2,42 +2,32 @@
 {
     using Domain.Event.Error;
     using ErrorOr;
-    using Throw;
 
     internal class TimeRange
     {
-        public TimeOnly Start { get; init; }
-        public TimeOnly End { get; init; }
+        public DateTime Start { get; init; }
+        public DateTime End { get; init; }
 
-        public TimeRange(TimeOnly start, TimeOnly end)
+        internal TimeRange(DateTime start, DateTime end)
         {
-            Start = start.Throw().IfGreaterThanOrEqualTo(end);
+            Start = start;
             End = end;
         }
 
         public static ErrorOr<TimeRange> FromDateTimes(DateTime start, DateTime end)
         {
-            if (start.Date != end.Date || start >= end)
+            if (start >= end)
             {
                 return EventErrors.DefaultDateValueError;
             }
 
-            return new TimeRange(TimeOnly.FromDateTime(start), TimeOnly.FromDateTime(end));
+            return new TimeRange(start, end);
         }
 
         public bool OverlapsWith(TimeRange other)
         {
-            if (Start >= other.End)
-            {
-                return false;
-            }
-
-            if (other.Start >= End)
-            {
-                return false;
-            }
-
-            return true;
+            return Start < other.End && other.Start < End;
         }
     }
+
 }
