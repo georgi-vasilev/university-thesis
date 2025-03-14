@@ -1,20 +1,28 @@
 ﻿namespace Domain.Event.Factory
 {
-    using Domain.Event.Error;
+    using Error;
     using ErrorOr;
 
     internal class EventBuilder
     {
-        private string _name;
+        private string _name = default!;
+        private string _description = default!;
         private DateOnly _date;
-        private TimeRange _time;
-        private Venue _venue;
-        private Guid _organizerId;
+        private TimeRange _time = default!;
+        private Guid _venueId;
+        private Guid _hostId;
+        private int _capacity;
         private Guid? _id;
 
         public EventBuilder WithName(string name)
         {
             _name = name;
+            return this;
+        }
+
+        public EventBuilder WithDescription(string description)
+        {
+            _description = description;
             return this;
         }
 
@@ -30,15 +38,21 @@
             return this;
         }
 
-        public EventBuilder WithVenue(Venue venue)
+        public EventBuilder WithVenue(Guid venueId)
         {
-            _venue = venue;
+            _venueId = venueId;
             return this;
         }
 
-        public EventBuilder WithOrganizerId(Guid organizerId)
+        public EventBuilder WithHostId(Guid hostId)
         {
-            _organizerId = organizerId;
+            _hostId = hostId;
+            return this;
+        }
+
+        public EventBuilder WithCapacity(int capacity)
+        {
+            _capacity = capacity;
             return this;
         }
 
@@ -50,6 +64,16 @@
 
         public ErrorOr<Event> Build()
         {
+            if (string.IsNullOrWhiteSpace(_name))
+            {
+                return EventErrors.InvalidName;
+            }
+
+            if (string.IsNullOrWhiteSpace(_description))
+            {
+                return EventErrors.InvalidDescription;
+            }
+
             if (_date == default)
             {
                 return EventErrors.DefaultDateValueError;
@@ -60,23 +84,32 @@
                 return EventErrors.NullTimeError;
             }
 
-            if (_venue is null)
-            {
-                return EventErrors.NullVenueError;
-            }
-
-            if (_organizerId == default)
-            {
-                return EventErrors.InvalidOrganizerIdValueError;
-            }
-
             if (_time.End <= _time.Start)
             {
                 return EventErrors.InvalidEndTimeError;
             }
 
-            return new Event(_name, _date, _time, _venue, _organizerId, _id);
+            if (_venueId == Guid.Empty)
+            {
+                return EventErrors.NullVenueError;
+            }
+
+            if (_hostId == default)
+            {
+                return EventErrors.InvalidOrganizerIdValueError;
+            }
+
+            if (_capacity <= 0)
+            {
+                return EventErrors.InvalidCapacity;
+            }
+
+            if (_date < DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                return EventErrors.DateIsInThePastError;
+            }
+
+            return new Event(_name, _description, _date, _time, _venueId, _hostId, _capacity, _id);
         }
     }
-
 }

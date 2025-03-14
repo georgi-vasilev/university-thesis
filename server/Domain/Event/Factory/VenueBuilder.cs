@@ -1,13 +1,13 @@
 ﻿namespace Domain.Event.Factory
 {
-    using Domain.Event.Error;
+    using Error;
     using ErrorOr;
 
     internal class VenueBuilder
     {
         private Guid _id = Guid.NewGuid();
-        private string _name;
-        private Address _address;
+        private string _name = default!;
+        private Address _address = default!;
         private int _capacity;
         private VenueType _type;
 

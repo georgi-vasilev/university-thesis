@@ -1,15 +1,15 @@
 ﻿namespace Domain.Event.Factory
 {
-    using Domain.Event.Error;
+    using Error;
     using ErrorOr;
 
     internal class AddressBuilder
     {
-        private string _street;
-        private string _city;
-        private string _state;
-        private string _country;
-        private string _zipCode;
+        private string _street = default!;
+        private string _city = default!;
+        private string _state = default!;
+        private string _country = default!;
+        private string _zipCode = default!;
 
         public AddressBuilder WithStreet(string street)
         {

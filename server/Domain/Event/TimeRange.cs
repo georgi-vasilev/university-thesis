@@ -2,42 +2,65 @@
 {
     using Domain.Event.Error;
     using ErrorOr;
-    using Throw;
 
     internal class TimeRange
     {
-        public TimeOnly Start { get; init; }
-        public TimeOnly End { get; init; }
+        public DateTime Start { get; init; }
+        public DateTime End { get; init; }
 
-        public TimeRange(TimeOnly start, TimeOnly end)
+        internal TimeRange(DateTime start, DateTime end)
         {
-            Start = start.Throw().IfGreaterThanOrEqualTo(end);
+            Start = start;
             End = end;
         }
 
         public static ErrorOr<TimeRange> FromDateTimes(DateTime start, DateTime end)
         {
-            if (start.Date != end.Date || start >= end)
+            if (start >= end)
             {
                 return EventErrors.DefaultDateValueError;
             }
 
-            return new TimeRange(TimeOnly.FromDateTime(start), TimeOnly.FromDateTime(end));
+            return new TimeRange(start, end);
         }
 
         public bool OverlapsWith(TimeRange other)
         {
-            if (Start >= other.End)
+            return Start < other.End && other.Start < End;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as TimeRange);
+        }
+
+        public bool Equals(TimeRange other)
+        {
+            if (other is null)
             {
                 return false;
             }
+            return Start.Equals(other.Start) && End.Equals(other.End);
+        }
 
-            if (other.Start >= End)
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Start, End);
+        }
+
+        public static bool operator ==(TimeRange left, TimeRange right)
+        {
+            if (left is null)
             {
-                return false;
+                return right is null;
             }
+            return left.Equals(right);
+        }
 
-            return true;
+        public static bool operator !=(TimeRange left, TimeRange right)
+        {
+            return !(left == right);
         }
     }
+
 }
