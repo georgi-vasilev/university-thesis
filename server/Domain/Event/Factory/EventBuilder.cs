@@ -1,14 +1,14 @@
 ﻿namespace Domain.Event.Factory
 {
-    using Domain.Event.Error;
+    using Error;
     using ErrorOr;
 
     internal class EventBuilder
     {
-        private string _name;
-        private string _description;
+        private string _name = default!;
+        private string _description = default!;
         private DateOnly _date;
-        private TimeRange _time;
+        private TimeRange _time = default!;
         private Guid _venueId;
         private Guid _hostId;
         private int _capacity;
