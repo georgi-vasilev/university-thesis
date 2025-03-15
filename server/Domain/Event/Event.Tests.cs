@@ -44,7 +44,7 @@
             var result = @event.UpdateDetails("", "Updated Description", new DateOnly(2023, 9, 1), @event.Time, @event.VenueId);
 
             result.IsError.Should().BeTrue();
-            result.FirstError.Should().Be(EventErrors.InvalidName);
+            result.FirstError.Should().Be(EventErrors.InvalidNameError);
         }
 
         [Fact]
@@ -55,7 +55,7 @@
             var result = @event.UpdateDetails("Updated Name", "", new DateOnly(2023, 9, 1), @event.Time, @event.VenueId);
 
             result.IsError.Should().BeTrue();
-            result.FirstError.Should().Be(EventErrors.InvalidDescription);
+            result.FirstError.Should().Be(EventErrors.InvalidDescriptionError);
         }
 
         [Fact]
@@ -110,7 +110,7 @@
             var secondResult = smallCapacityEvent.AddTicket(Guid.NewGuid());
 
             secondResult.IsError.Should().BeTrue();
-            secondResult.FirstError.Should().Be(EventErrors.CapacityExceeded);
+            secondResult.FirstError.Should().Be(EventErrors.CapacityExceededError);
         }
 
         [Fact]

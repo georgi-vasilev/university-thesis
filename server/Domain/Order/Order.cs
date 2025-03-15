@@ -1,15 +1,20 @@
 ﻿namespace Domain.Order
 {
     using Builder;
+    using Common;
     using Common.ValueObject;
     using Error;
     using ErrorOr;
 
-    internal class Order
+    public class Order : IAggregateRoot
     {
         private readonly HashSet<Ticket> _tickets = new HashSet<Ticket>();
+        private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
+
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public Guid BuyerId { get; private set; }
+        public Guid EventId { get; private set; }
         public OrderStatus Status { get; private set; }
         public PaymentDetails? Payment { get; private set; }
         public IReadOnlyCollection<Ticket> Tickets => _tickets;
@@ -163,6 +168,9 @@
             //TODO: dispatch event
             return Result.Success;
         }
+
+        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        private void ClearDomainEvents() => _domainEvents.Clear();
 
     }
 }

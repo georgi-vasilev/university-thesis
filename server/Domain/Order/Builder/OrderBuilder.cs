@@ -3,12 +3,12 @@
     using Error;
     using ErrorOr;
 
-    internal class OrderBuilder
+    internal class OrderBuilder : IOrderBuilder
     {
         private Guid _id = Guid.NewGuid();
         private Guid _buyerId = default!;
 
-        public OrderBuilder WithBuyer(Guid buyerId)
+        public IOrderBuilder WithBuyer(Guid buyerId)
         {
             _buyerId = buyerId;
             return this;

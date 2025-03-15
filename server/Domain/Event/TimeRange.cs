@@ -3,7 +3,7 @@
     using Domain.Event.Error;
     using ErrorOr;
 
-    internal class TimeRange
+    public class TimeRange
     {
         public DateTime Start { get; init; }
         public DateTime End { get; init; }

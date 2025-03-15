@@ -1,12 +1,15 @@
 ﻿namespace Domain.Host
 {
+    using Common;
     using Error;
     using ErrorOr;
 
-    internal class Host
+    public class Host : IAggregateRoot
     {
         private readonly HashSet<Guid> _organizedEventIds = new HashSet<Guid>();
+        private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
 
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public ContactInfo ContactInfo { get; private set; }
         public Guid VenueId { get; private set; }
@@ -101,5 +104,8 @@
             //TODO: dispatch domain event
             return Result.Success;
         }
+
+        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        private void ClearDomainEvents() => _domainEvents.Clear();
     }
 }
