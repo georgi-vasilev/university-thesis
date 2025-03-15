@@ -4,11 +4,13 @@
     using Error;
     using ErrorOr;
 
-    internal class Event
+    internal class Event : IAggregateRoot
     {
         private readonly Guid _hostId;
         private readonly HashSet<Guid> _ticketIds = new HashSet<Guid>();
-        public List<IDomainEvent> DomainEvents { get; } = new List<IDomainEvent>();
+        private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
+
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -141,5 +143,8 @@
 
             return Result.Success;
         }
+
+        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        private void ClearDomainEvents() => _domainEvents.Clear();
     }
 }
