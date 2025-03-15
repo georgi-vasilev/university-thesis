@@ -6,7 +6,7 @@
     using Error;
     using ErrorOr;
 
-    internal class Order : IAggregateRoot
+    public class Order : IAggregateRoot
     {
         private readonly HashSet<Ticket> _tickets = new HashSet<Ticket>();
         private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
@@ -14,6 +14,7 @@
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public Guid BuyerId { get; private set; }
+        public Guid EventId { get; private set; }
         public OrderStatus Status { get; private set; }
         public PaymentDetails? Payment { get; private set; }
         public IReadOnlyCollection<Ticket> Tickets => _tickets;

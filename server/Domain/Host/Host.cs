@@ -4,7 +4,7 @@
     using Error;
     using ErrorOr;
 
-    internal class Host : IAggregateRoot
+    public class Host : IAggregateRoot
     {
         private readonly HashSet<Guid> _organizedEventIds = new HashSet<Guid>();
         private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();

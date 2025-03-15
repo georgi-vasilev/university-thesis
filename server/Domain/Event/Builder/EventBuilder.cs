@@ -1,9 +1,10 @@
 ﻿namespace Domain.Event.Factory
 {
+    using Domain.Event.Builder;
     using Error;
     using ErrorOr;
 
-    internal class EventBuilder
+    internal class EventBuilder : IEventBuilder
     {
         private string _name = default!;
         private string _description = default!;
@@ -14,49 +15,49 @@
         private int _capacity;
         private Guid? _id;
 
-        public EventBuilder WithName(string name)
+        public IEventBuilder WithName(string name)
         {
             _name = name;
             return this;
         }
 
-        public EventBuilder WithDescription(string description)
+        public IEventBuilder WithDescription(string description)
         {
             _description = description;
             return this;
         }
 
-        public EventBuilder WithDate(DateOnly date)
+        public IEventBuilder WithDate(DateOnly date)
         {
             _date = date;
             return this;
         }
 
-        public EventBuilder WithTime(TimeRange time)
+        public IEventBuilder WithTime(TimeRange time)
         {
             _time = time;
             return this;
         }
 
-        public EventBuilder WithVenue(Guid venueId)
+        public IEventBuilder WithVenue(Guid venueId)
         {
             _venueId = venueId;
             return this;
         }
 
-        public EventBuilder WithHostId(Guid hostId)
+        public IEventBuilder WithHostId(Guid hostId)
         {
             _hostId = hostId;
             return this;
         }
 
-        public EventBuilder WithCapacity(int capacity)
+        public IEventBuilder WithCapacity(int capacity)
         {
             _capacity = capacity;
             return this;
         }
 
-        public EventBuilder WithId(Guid id)
+        public IEventBuilder WithId(Guid id)
         {
             _id = id;
             return this;
@@ -66,12 +67,12 @@
         {
             if (string.IsNullOrWhiteSpace(_name))
             {
-                return EventErrors.InvalidName;
+                return EventErrors.InvalidNameError;
             }
 
             if (string.IsNullOrWhiteSpace(_description))
             {
-                return EventErrors.InvalidDescription;
+                return EventErrors.InvalidDescriptionError;
             }
 
             if (_date == default)
@@ -101,7 +102,7 @@
 
             if (_capacity <= 0)
             {
-                return EventErrors.InvalidCapacity;
+                return EventErrors.InvalidCapacityError;
             }
 
             if (_date < DateOnly.FromDateTime(DateTime.UtcNow))

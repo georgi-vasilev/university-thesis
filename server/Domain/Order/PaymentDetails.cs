@@ -1,6 +1,6 @@
 ﻿namespace Domain.Order
 {
-    internal record PaymentDetails
+    public record PaymentDetails
     {
         public decimal Amount { get; }
         public string PaymentMethod { get; }

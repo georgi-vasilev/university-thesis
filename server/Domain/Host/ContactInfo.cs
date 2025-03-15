@@ -4,7 +4,7 @@
     using ErrorOr;
     using System.ComponentModel.DataAnnotations;
 
-    internal record ContactInfo
+    public record ContactInfo
     {
         public Guid Id { get; private set; }
         public string FirstName { get; private set; } = default!;

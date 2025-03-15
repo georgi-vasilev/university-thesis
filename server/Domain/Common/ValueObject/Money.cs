@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal record Money : IEquatable<Money>
+    public record Money : IEquatable<Money>
     {
         public decimal Amount { get; }
         public string Currency { get; }

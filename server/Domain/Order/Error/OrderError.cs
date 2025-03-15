@@ -23,5 +23,17 @@
         public static readonly Error CannotChangeOrderStatusError = Error.Validation(
             code: "Order.Buyer",
             description: "Order is cancelled. Status cannot be changed.");
+
+        public static readonly Error OrderNotFoundError = Error.Validation(
+            code: "Order.Complete",
+            description: "Order not found.");
+
+        public static readonly Error OrderAlreadyCompletedError = Error.Validation(
+            code: "Order.Complete",
+            description: "Order already completed.");
+
+        public static readonly Error TicketAlreadyUsedError = Error.Validation(
+            code: "Order.Ticket",
+            description: "Ticket was already used. Order Cannot be cancelled.");
     }
 }

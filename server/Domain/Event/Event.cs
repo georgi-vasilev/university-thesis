@@ -4,7 +4,7 @@
     using Error;
     using ErrorOr;
 
-    internal class Event : IAggregateRoot
+    public class Event : IAggregateRoot
     {
         private readonly Guid _hostId;
         private readonly HashSet<Guid> _ticketIds = new HashSet<Guid>();
@@ -50,12 +50,12 @@
         {
             if (_ticketIds.Count >= Capacity)
             {
-                return EventErrors.CapacityExceeded;
+                return EventErrors.CapacityExceededError;
             }
 
             if (!_ticketIds.Add(ticketId))
             {
-                return EventErrors.TicketAlreadyAdded;
+                return EventErrors.TicketAlreadyAddedError;
             }
 
             // TODO: Add logic to raise domain event
@@ -68,12 +68,12 @@
         {
             if (Status == EventStatus.Cancelled && newStatus == EventStatus.Active)
             {
-                return EventErrors.InvalidStatusChangeOperationFromCancelledToActive;
+                return EventErrors.InvalidStatusChangeOperationFromCancelledToActiveError;
             }
 
             if (Status == EventStatus.Cancelled && newStatus == EventStatus.Postponed)
             {
-                return EventErrors.InvalidStatusChangeOperationFromCancelledToPostponed;
+                return EventErrors.InvalidStatusChangeOperationFromCancelledToPostponedError;
             }
 
             Status = newStatus;
@@ -114,12 +114,12 @@
         {
             if (string.IsNullOrEmpty(description))
             {
-                return EventErrors.InvalidDescription;
+                return EventErrors.InvalidDescriptionError;
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                return EventErrors.InvalidName;
+                return EventErrors.InvalidNameError;
             }
 
             if (date < DateOnly.FromDateTime(DateTime.UtcNow))
