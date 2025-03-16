@@ -17,6 +17,20 @@
             return orderResult.Value;
         }
 
+        private Ticket BuildValidTicket()
+        {
+            var eventId = Guid.NewGuid();
+            var money = new Money(100, "USD");
+            var ticketType = TicketType.General;
+            var builder = new TicketBuilder()
+                .WithEventId(eventId)
+                .WithPrice(money)
+                .WithType(ticketType)
+                .Build();
+
+            return builder.Value;
+        }
+
         [Fact]
         public void OrderBuilder_Should_Create_Valid_Order()
         {
@@ -34,11 +48,9 @@
         public void AddTicket_Should_Add_Ticket_To_Order()
         {
             var order = BuildValidOrder();
-            var eventId = Guid.NewGuid();
-            var money = new Money(100, "USD");
-            var ticketType = TicketType.General;
+            var ticket = BuildValidTicket();
 
-            var result = order.AddTicket(eventId, money, ticketType);
+            var result = order.AddTicket(ticket);
 
             result.IsError.Should().BeFalse();
             order.Tickets.Should().HaveCount(1);
@@ -48,13 +60,12 @@
         public void RemoveTicket_Should_Remove_Existing_Ticket()
         {
             var order = BuildValidOrder();
-            var eventId = Guid.NewGuid();
-            var money = new Money(50, "USD");
-            var ticketType = TicketType.VIP;
-            var addTicketResult = order.AddTicket(eventId, money, ticketType);
+            var ticket = BuildValidTicket();
+
+            var addTicketResult = order.AddTicket(ticket);
             addTicketResult.IsError.Should().BeFalse();
             addTicketResult.Value.Should().Be(Result.Success);
-            var ticket = order.Tickets.First();
+            ticket = order.Tickets.First();
 
             var result = order.RemoveTicket(ticket.Id);
 
@@ -115,11 +126,9 @@
         public void CompleteOrder_Should_Set_Status_To_Completed_When_Tickets_Exist()
         {
             var order = BuildValidOrder();
-            var eventId = Guid.NewGuid();
-            var money = new Money(75, "USD");
-            var ticketType = TicketType.General;
+            var ticket = BuildValidTicket();
 
-            var addTicketResult = order.AddTicket(eventId, money, ticketType);
+            var addTicketResult = order.AddTicket(ticket);
             addTicketResult.IsError.Should().BeFalse();
             addTicketResult.Value.Should().Be(Result.Success);
 
@@ -133,13 +142,11 @@
         public void MarkTicketAsSold_Should_Mark_Ticket_As_Sold()
         {
             var order = BuildValidOrder();
-            var eventId = Guid.NewGuid();
-            var money = new Money(80, "USD");
-            var ticketType = TicketType.General;
-            var addTicketResult = order.AddTicket(eventId, money, ticketType);
+            var ticket = BuildValidTicket();
+            var addTicketResult = order.AddTicket(ticket);
             addTicketResult.IsError.Should().BeFalse();
             addTicketResult.Value.Should().Be(Result.Success);
-            var ticket = order.Tickets.First();
+            ticket = order.Tickets.First();
             var attendeeId = Guid.NewGuid();
 
             var result = order.MarkTicketAsSold(ticket.Id, attendeeId);
