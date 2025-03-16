@@ -1,27 +1,28 @@
 ﻿namespace Domain.Host.Factory
 {
+    using Domain.Host.Builder;
     using Error;
     using ErrorOr;
 
-    internal class HostBuilder
+    internal class HostBuilder : IHostBuilder
     {
         private ContactInfo _contactInfo = default!;
         private Guid _venueId = default!;
         private Guid? _id;
 
-        public HostBuilder WithContactInfo(ContactInfo contactInfo)
+        public IHostBuilder WithContactInfo(ContactInfo contactInfo)
         {
             _contactInfo = contactInfo;
             return this;
         }
 
-        public HostBuilder WithVenueId(Guid venueId)
+        public IHostBuilder WithVenueId(Guid venueId)
         {
             _venueId = venueId;
             return this;
         }
 
-        public HostBuilder WithId(Guid id)
+        public IHostBuilder WithId(Guid id)
         {
             _id = id;
             return this;
