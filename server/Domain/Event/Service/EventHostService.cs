@@ -76,7 +76,7 @@
                 return EventErrors.EventNotFoundError;
             }
 
-            if (host.Id != @event.HostId)
+            if (host.Id != @event.HostId || !host.OrganizedEventIds.Contains(eventId))
             {
                 return EventErrors.EventDoesNotBelongToHostError;
             }

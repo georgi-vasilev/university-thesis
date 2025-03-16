@@ -40,7 +40,7 @@
             Date = date;
             Time = time;
             VenueId = venueId;
-            _hostId = hostId;
+            HostId = hostId;
             Capacity = capacity;
             Id = id ?? Guid.NewGuid();
             Status = EventStatus.Active;
