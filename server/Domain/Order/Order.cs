@@ -26,21 +26,8 @@
             Id = id ?? Guid.NewGuid();
         }
 
-        public ErrorOr<Success> AddTicket(Guid eventId, Money price, TicketType type)
+        public ErrorOr<Success> AddTicket(Ticket ticket)
         {
-            var ticketBuilderResult = new TicketBuilder()
-                .WithEventId(eventId)
-                .WithPrice(price)
-                .WithType(type)
-                .Build();
-
-            if (ticketBuilderResult.IsError)
-            {
-                return ticketBuilderResult.FirstError;
-            }
-
-            var ticket = ticketBuilderResult.Value;
-
             _tickets.Add(ticket);
 
             //TODO: dispatch event

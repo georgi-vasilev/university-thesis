@@ -15,12 +15,18 @@
         private readonly IEventRepository _eventRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderBuilder _orderBuilder;
+        private readonly ITicketBuilder _ticketBuilder;
 
-        public EventOrderService(IEventRepository eventRepository, IOrderRepository orderRepository, IOrderBuilder orderBuilder)
+        public EventOrderService(
+            IEventRepository eventRepository,
+            IOrderRepository orderRepository,
+            IOrderBuilder orderBuilder,
+            ITicketBuilder ticketBuilder)
         {
             _eventRepository = eventRepository;
             _orderRepository = orderRepository;
             _orderBuilder = orderBuilder;
+            _ticketBuilder = ticketBuilder;
         }
 
         public async Task<ErrorOr<Success>> CancelTicketOrderAsync(Guid buyerId, Guid ticketId)
@@ -151,7 +157,21 @@
                 return orderBuild.FirstError;
             }
             var order = orderBuild.Value;
-            var result = order.AddTicket(eventId, price, type);
+
+            var ticketBuilderResult = _ticketBuilder
+                .WithEventId(eventId)
+                .WithPrice(price)
+                .WithType(type)
+                .Build();
+
+            if (ticketBuilderResult.IsError)
+            {
+                return ticketBuilderResult.FirstError;
+            }
+
+            var ticket = ticketBuilderResult.Value;
+
+            var result = order.AddTicket(ticket);
             if (result.IsError)
             {
                 return result.FirstError;
