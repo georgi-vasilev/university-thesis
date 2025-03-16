@@ -1,8 +1,6 @@
 ﻿namespace Domain.Order
 {
-    using Builder;
     using Common;
-    using Common.ValueObject;
     using Error;
     using ErrorOr;
 
@@ -28,6 +26,11 @@
 
         public ErrorOr<Success> AddTicket(Ticket ticket)
         {
+            if (_tickets.Any(t => t.Id == ticket.Id))
+            {
+                return OrderError.TicketAlreadyAddedError;
+            }
+
             _tickets.Add(ticket);
 
             //TODO: dispatch event

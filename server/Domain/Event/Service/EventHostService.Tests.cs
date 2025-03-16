@@ -1,16 +1,15 @@
 ﻿namespace Domain.Event.Service
 {
-    using Domain.Event;
-    using Domain.Event.Error;
-    using Domain.Event.Repository;
-    using Domain.Host;
-    using Domain.Host.Repository;
-    using Domain.Order;
-    using Domain.Order.Builder;
-    using Domain.Order.Repository;
+    using Error;
     using ErrorOr;
     using FluentAssertions;
+    using Host;
+    using Host.Repository;
     using Moq;
+    using Order;
+    using Order.Builder;
+    using Order.Repository;
+    using Repository;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

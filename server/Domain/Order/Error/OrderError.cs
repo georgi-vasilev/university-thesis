@@ -35,5 +35,9 @@
         public static readonly Error TicketAlreadyUsedError = Error.Validation(
             code: "Order.Ticket",
             description: "Ticket was already used. Order Cannot be cancelled.");
+
+        public static readonly Error TicketAlreadyAddedError = Error.Validation(
+            code: "Order.Ticket",
+            description: "A ticket with the same identifier has already been added to the order.");
     }
 }
