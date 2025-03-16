@@ -181,6 +181,8 @@
                 .Setup(r => r.GetByIdAsync(eventId))
                 .ReturnsAsync(@event);
 
+            host.AddOrganizedEvent(eventId);
+
             var completedOrder = new Order(Guid.NewGuid());
             completedOrder.ChangeOrderStatus(OrderStatus.Completed);
             _mockOrderRepository
