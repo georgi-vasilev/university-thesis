@@ -8,13 +8,13 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class CreateEventHandler : IRequestHandler<CreateEventCommand, ErrorOr<CreateEventOutputModel>>
+    public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ErrorOr<CreateEventOutputModel>>
     {
         private readonly IEventDomainRepository _repository;
         private readonly IEventBuilder _eventBuilder;
         private readonly IEventSchedulingService _eventScheduling;
 
-        public CreateEventHandler(
+        public CreateEventCommandHandler(
             IEventDomainRepository repository,
             IEventBuilder eventBuilder,
             IEventSchedulingService eventScheduling)

@@ -12,12 +12,12 @@
     internal class EventHostService : IEventHostService
     {
         private readonly IEventDomainRepository _eventRepository;
-        private readonly IHostRepository _hostRepository;
+        private readonly IHostDomainRepository _hostRepository;
         private readonly IOrderRepository _orderRepository;
 
         public EventHostService(
             IEventDomainRepository eventRepository,
-            IHostRepository hostRepository,
+            IHostDomainRepository hostRepository,
             IOrderRepository orderRepository)
         {
             _eventRepository = eventRepository;
