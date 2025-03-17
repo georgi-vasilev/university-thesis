@@ -17,7 +17,7 @@
 
     public class EventHostServiceTests
     {
-        private readonly Mock<IEventRepository> _mockEventRepository;
+        private readonly Mock<IEventDomainRepository> _mockEventRepository;
         private readonly Mock<IHostRepository> _mockHostRepository;
         private readonly Mock<IOrderRepository> _mockOrderRepository;
         private readonly Mock<ITicketBuilder> _mockTicketBuilder;
@@ -25,7 +25,7 @@
 
         public EventHostServiceTests()
         {
-            _mockEventRepository = new Mock<IEventRepository>();
+            _mockEventRepository = new Mock<IEventDomainRepository>();
             _mockHostRepository = new Mock<IHostRepository>();
             _mockOrderRepository = new Mock<IOrderRepository>();
             _mockTicketBuilder = new Mock<ITicketBuilder>();
@@ -39,10 +39,10 @@
             var host = CreateValidHost();
             var eventId = Guid.NewGuid();
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync((Event)null);
 
-            var result = await _service.CancelEventForHostAsync(host, eventId);
+            var result = await _service.CancelEventForHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.EventNotFoundError);
@@ -56,10 +56,10 @@
 
             var @event = CreateValidEvent(hostId: Guid.NewGuid(), eventId: eventId);
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync(@event);
 
-            var result = await _service.CancelEventForHostAsync(host, eventId);
+            var result = await _service.CancelEventForHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.EventDoesNotBelongToHostError);
@@ -75,10 +75,10 @@
 
             @event.ChangeStatus(EventStatus.Cancelled);
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync(@event);
 
-            var result = await _service.CancelEventForHostAsync(host, eventId);
+            var result = await _service.CancelEventForHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeFalse();
 
@@ -91,15 +91,15 @@
             var host = CreateValidHost();
             var eventId = Guid.NewGuid();
             var @event = CreateValidEvent(host.Id, eventId);
-            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId))
+            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                                 .ReturnsAsync(@event);
-            _mockEventRepository.Setup(r => r.UpdateAsync(@event))
+            _mockEventRepository.Setup(r => r.UpdateAsync(@event, new CancellationToken()))
                                 .Returns(Task.CompletedTask);
 
-            var result = await _service.CancelEventForHostAsync(host, eventId);
+            var result = await _service.CancelEventForHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeFalse();
-            _mockEventRepository.Verify(r => r.UpdateAsync(@event), Times.Once);
+            _mockEventRepository.Verify(r => r.UpdateAsync(@event, new CancellationToken()), Times.Once);
         }
 
 
@@ -112,7 +112,7 @@
 
             var @event = CreateValidEvent(Guid.NewGuid(), eventId);
 
-            var result = await _service.CreateEventForHostAsync(host, @event);
+            var result = await _service.CreateEventForHostAsync(host, @event, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.EventDoesNotBelongToHostError);
@@ -125,17 +125,17 @@
             var eventId = Guid.NewGuid();
             var @event = CreateValidEvent(host.Id, eventId);
             _mockEventRepository
-                .Setup(r => r.AddAsync(@event))
+                .Setup(r => r.AddAsync(@event, new CancellationToken()))
                 .Returns(Task.CompletedTask);
             _mockHostRepository
-                .Setup(r => r.UpdateAsync(host))
+                .Setup(r => r.UpdateAsync(host, new CancellationToken()))
                 .Returns(Task.CompletedTask);
 
-            var result = await _service.CreateEventForHostAsync(host, @event);
+            var result = await _service.CreateEventForHostAsync(host, @event, new CancellationToken());
 
             result.IsError.Should().BeFalse();
-            _mockEventRepository.Verify(r => r.AddAsync(@event), Times.Once);
-            _mockHostRepository.Verify(r => r.UpdateAsync(host), Times.Once);
+            _mockEventRepository.Verify(r => r.AddAsync(@event, new CancellationToken()), Times.Once);
+            _mockHostRepository.Verify(r => r.UpdateAsync(host, new CancellationToken()), Times.Once);
         }
 
 
@@ -145,10 +145,10 @@
             var host = CreateValidHost();
             var eventId = Guid.NewGuid();
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync((Event)null);
 
-            var result = await _service.RemoveEventFromHostAsync(host, eventId);
+            var result = await _service.RemoveEventFromHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.EventNotFoundError);
@@ -162,10 +162,10 @@
 
             var @event = CreateValidEvent(Guid.NewGuid(), eventId);
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync(@event);
 
-            var result = await _service.RemoveEventFromHostAsync(host, eventId);
+            var result = await _service.RemoveEventFromHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.EventDoesNotBelongToHostError);
@@ -178,7 +178,7 @@
             var eventId = Guid.NewGuid();
             var @event = CreateValidEvent(host.Id, eventId);
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync(@event);
 
             host.AddOrganizedEvent(eventId);
@@ -189,7 +189,7 @@
                 .Setup(r => r.GetOrdersForEventAsync(eventId))
                 .ReturnsAsync(new List<Order> { completedOrder });
 
-            var result = await _service.RemoveEventFromHostAsync(host, eventId);
+            var result = await _service.RemoveEventFromHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(EventErrors.CannotDeleteEventWithOrders);
@@ -203,22 +203,22 @@
             var @event = CreateValidEvent(host.Id, eventId);
             host.AddOrganizedEvent(eventId);
             _mockEventRepository
-                .Setup(r => r.GetByIdAsync(eventId))
+                .Setup(r => r.GetByIdAsync(eventId, new CancellationToken()))
                 .ReturnsAsync(@event);
 
             _mockEventRepository
-                .Setup(r => r.DeleteAsync(eventId))
+                .Setup(r => r.DeleteAsync(eventId, new CancellationToken()))
                 .Returns(Task.CompletedTask);
 
             _mockOrderRepository
                 .Setup(r => r.GetOrdersForEventAsync(eventId))
                 .ReturnsAsync(new List<Order>());
 
-            var result = await _service.RemoveEventFromHostAsync(host, eventId);
+            var result = await _service.RemoveEventFromHostAsync(host, eventId, new CancellationToken());
 
             result.IsError.Should().BeFalse();
-            _mockHostRepository.Verify(r => r.UpdateAsync(host), Times.Once);
-            _mockEventRepository.Verify(r => r.DeleteAsync(eventId), Times.Once);
+            _mockHostRepository.Verify(r => r.UpdateAsync(host, new CancellationToken()), Times.Once);
+            _mockEventRepository.Verify(r => r.DeleteAsync(eventId, new CancellationToken()), Times.Once);
         }
 
 

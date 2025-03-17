@@ -9,16 +9,17 @@
     using Order.Error;
     using Order.Repository;
     using Repository;
+    using System.Threading;
 
     internal class EventOrderService : IEventOrderService
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly IEventDomainRepository _eventRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderBuilder _orderBuilder;
         private readonly ITicketBuilder _ticketBuilder;
 
         public EventOrderService(
-            IEventRepository eventRepository,
+            IEventDomainRepository eventRepository,
             IOrderRepository orderRepository,
             IOrderBuilder orderBuilder,
             ITicketBuilder ticketBuilder)
@@ -29,7 +30,7 @@
             _ticketBuilder = ticketBuilder;
         }
 
-        public async Task<ErrorOr<Success>> CancelTicketOrderAsync(Guid buyerId, Guid ticketId)
+        public async Task<ErrorOr<Success>> CancelTicketOrderAsync(Guid buyerId, Guid ticketId, CancellationToken cancellationToken)
         {
             var order = await _orderRepository
                 .GetOrderAsync(order => 
@@ -72,16 +73,16 @@
                 }
             }
 
-            await _orderRepository.UpdateAsync(order);
+            await _orderRepository.UpdateAsync(order, cancellationToken);
 
             // TODO; dispatch event.
             return Result.Success;
         }
 
 
-        public async Task<ErrorOr<Success>> ChangeEventVenueAsync(Host host, Guid eventId, Guid newVenueId)
+        public async Task<ErrorOr<Success>> ChangeEventVenueAsync(Host host, Guid eventId, Guid newVenueId, CancellationToken cancellationToken)
         {
-            var @event = await _eventRepository.GetByIdAsync(eventId);
+            var @event = await _eventRepository.GetByIdAsync(eventId, cancellationToken);
             if (@event is null)
             {
                 return EventErrors.EventNotFoundError;
@@ -111,9 +112,9 @@
             return Result.Success;
         }
 
-        public async Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId)
+        public async Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetByIdAsync(orderId);
+            var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken);
             if (order is null)
             {
                 return OrderError.OrderNotFoundError;
@@ -125,16 +126,21 @@
                 return completeResult.FirstError;
             }
 
-            await _orderRepository.UpdateAsync(order);
+            await _orderRepository.UpdateAsync(order, cancellationToken);
 
             // TODO: dispatch event
             return Result.Success;
         }
 
 
-        public async Task<ErrorOr<Success>> PurchaseTicketAsync(Guid buyerId, Guid eventId, Money price, TicketType type)
+        public async Task<ErrorOr<Success>> PurchaseTicketAsync(
+            Guid buyerId,
+            Guid eventId,
+            Money price,
+            TicketType type, 
+            CancellationToken cancellationToken)
         {
-            var @event = await _eventRepository.GetByIdAsync(eventId);
+            var @event = await _eventRepository.GetByIdAsync(eventId, cancellationToken);
             if (@event is null)
             {
                 return EventErrors.EventNotFoundError;
@@ -177,21 +183,21 @@
                 return result.FirstError;
             }
 
-            await _orderRepository.UpdateAsync(order);
+            await _orderRepository.UpdateAsync(order, cancellationToken);
 
             // TODO: domain event
             return Result.Success;
 
         }
 
-        public async Task<ErrorOr<Success>> UpdateEventDetailsAsync(Host host, Event updatedEvent)
+        public async Task<ErrorOr<Success>> UpdateEventDetailsAsync(Host host, Event updatedEvent, CancellationToken cancellationToken)
         {
             if (host.Id != updatedEvent.HostId)
             {
                 return EventErrors.EventDoesNotBelongToHostError;
             }
 
-            var existingEvent = await _eventRepository.GetByIdAsync(updatedEvent.Id);
+            var existingEvent = await _eventRepository.GetByIdAsync(updatedEvent.Id, cancellationToken);
             if (existingEvent is null)
             {
                 return EventErrors.EventNotFoundError;
@@ -208,7 +214,7 @@
                 return updateResult.FirstError;
             }
 
-            await _eventRepository.UpdateAsync(existingEvent);
+            await _eventRepository.UpdateAsync(existingEvent, cancellationToken);
 
             //TODO: dispatch event
             return Result.Success;

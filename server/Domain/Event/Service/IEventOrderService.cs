@@ -13,16 +13,18 @@
             Guid buyerId,
             Guid eventId,
             Money price,
-            TicketType type);
+            TicketType type,
+            CancellationToken cancellationToken);
 
         Task<ErrorOr<Success>> CancelTicketOrderAsync(
             Guid buyerId,
-            Guid ticketId);
+            Guid ticketId,
+            CancellationToken cancellationToken);
 
-        Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId);
+        Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId, CancellationToken cancellationToken);
 
-        Task<ErrorOr<Success>> UpdateEventDetailsAsync(Host host, Event updatedEvent);
+        Task<ErrorOr<Success>> UpdateEventDetailsAsync(Host host, Event updatedEvent, CancellationToken cancellationToken);
 
-        Task<ErrorOr<Success>> ChangeEventVenueAsync(Host host, Guid eventId, Guid newVenueId);
+        Task<ErrorOr<Success>> ChangeEventVenueAsync(Host host, Guid eventId, Guid newVenueId, CancellationToken cancellationToken);
     }
 }
