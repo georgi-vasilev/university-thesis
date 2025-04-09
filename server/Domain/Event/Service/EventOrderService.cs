@@ -10,11 +10,14 @@
     using Order.Repository;
     using Repository;
     using System.Threading;
+    using Venue.Error;
+    using Venue.Repository;
 
     internal class EventOrderService : IEventOrderService
     {
         private readonly IEventDomainRepository _eventRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IVenueDomainRepository _venueRepository;
         private readonly IOrderBuilder _orderBuilder;
         private readonly ITicketBuilder _ticketBuilder;
 
@@ -22,12 +25,14 @@
             IEventDomainRepository eventRepository,
             IOrderRepository orderRepository,
             IOrderBuilder orderBuilder,
-            ITicketBuilder ticketBuilder)
+            ITicketBuilder ticketBuilder,
+            IVenueDomainRepository venueRepository)
         {
             _eventRepository = eventRepository;
             _orderRepository = orderRepository;
             _orderBuilder = orderBuilder;
             _ticketBuilder = ticketBuilder;
+            _venueRepository = venueRepository;
         }
 
         public async Task<ErrorOr<Success>> CancelTicketOrderAsync(Guid buyerId, Guid ticketId, CancellationToken cancellationToken)
@@ -146,7 +151,13 @@
                 return EventErrors.EventNotFoundError;
             }
 
-            if (@event.TicketCount >= @event.Capacity)
+            var venue = await _venueRepository.GetByIdAsync(@event.VenueId, cancellationToken);
+            if(venue is null)
+            {
+                return VenueErrors.VenueNotFoundError;
+            }
+
+            if (@event.TicketCount >= venue.Capacity)
             {
                 return EventErrors.NoTicketsLeftError;
             }

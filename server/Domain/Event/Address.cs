@@ -1,6 +1,6 @@
 ﻿namespace Domain.Event
 {
-    internal record Address
+    public record Address
     {
         public string Street { get; }
         public string City { get; }
@@ -8,7 +8,7 @@
         public string Country { get; }
         public string ZipCode { get; }
 
-        public Address(string street, string city, string state, string country, string zipCode)
+        internal Address(string street, string city, string state, string country, string zipCode)
         {
             Street = street;
             City = city;

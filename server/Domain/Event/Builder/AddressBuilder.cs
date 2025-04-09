@@ -1,4 +1,4 @@
-﻿namespace Domain.Event.Factory
+﻿namespace Domain.Event.Builder
 {
     using Error;
     using ErrorOr;

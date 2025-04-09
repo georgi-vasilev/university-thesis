@@ -238,7 +238,14 @@
                                                            DateTime.UtcNow.AddDays(10).AddHours(14));
             timeRangeResult.IsError.Should().BeFalse();
             var timeRange = timeRangeResult.Value;
-            return new Event("Concert", "A great concert", date, timeRange, Guid.NewGuid(), hostId, 100, eventId);
+            return new Event(
+                "Concert",
+                "A great concert",
+                date,
+                timeRange,
+                Guid.NewGuid(),
+                hostId,
+                eventId);
         }
     }
 }

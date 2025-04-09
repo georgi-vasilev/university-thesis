@@ -33,7 +33,6 @@
                 .WithDescription(request.Description)
                 .WithDate(request.Date)
                 .WithTime(request.Time)
-                .WithCapacity(request.Capacity)
                 .WithHostId(request.HostId)
                 .WithVenue(request.VenueId)
                 .Build();

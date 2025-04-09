@@ -1,6 +1,7 @@
-﻿namespace Domain.Event
+﻿namespace Domain.Venue
 {
-    using Domain.Event.Factory;
+    using Builder;
+    using Event.Builder;
     using FluentAssertions;
     using Xunit;
 

@@ -1,4 +1,4 @@
-﻿namespace Domain.Event.Factory
+﻿namespace Domain.Event.Builder
 {
     using Domain.Event.Builder;
     using Error;
@@ -12,7 +12,6 @@
         private TimeRange _time = default!;
         private Guid _venueId;
         private Guid _hostId;
-        private int _capacity;
         private Guid? _id;
 
         public IEventBuilder WithName(string name)
@@ -48,12 +47,6 @@
         public IEventBuilder WithHostId(Guid hostId)
         {
             _hostId = hostId;
-            return this;
-        }
-
-        public IEventBuilder WithCapacity(int capacity)
-        {
-            _capacity = capacity;
             return this;
         }
 
@@ -100,17 +93,12 @@
                 return EventErrors.InvalidOrganizerIdValueError;
             }
 
-            if (_capacity <= 0)
-            {
-                return EventErrors.InvalidCapacityError;
-            }
-
             if (_date < DateOnly.FromDateTime(DateTime.UtcNow))
             {
                 return EventErrors.DateIsInThePastError;
             }
 
-            return new Event(_name, _description, _date, _time, _venueId, _hostId, _capacity, _id);
+            return new Event(_name, _description, _date, _time, _venueId, _hostId, _id);
         }
     }
 }

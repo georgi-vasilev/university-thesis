@@ -1,9 +1,10 @@
-﻿namespace Domain.Event.Factory
+﻿namespace Domain.Venue.Builder
 {
+    using Event;
     using Error;
     using ErrorOr;
 
-    internal class VenueBuilder
+    internal class VenueBuilder : IVenueBuilder
     {
         private Guid _id = Guid.NewGuid();
         private string _name = default!;
@@ -11,31 +12,31 @@
         private int _capacity;
         private VenueType _type;
 
-        public VenueBuilder WithId(Guid id)
+        public IVenueBuilder WithId(Guid id)
         {
             _id = id;
             return this;
         }
 
-        public VenueBuilder WithName(string name)
+        public IVenueBuilder WithName(string name)
         {
             _name = name;
             return this;
         }
 
-        public VenueBuilder WithAddress(Address address)
+        public IVenueBuilder WithAddress(Address address)
         {
             _address = address;
             return this;
         }
 
-        public VenueBuilder WithCapacity(int capacity)
+        public IVenueBuilder WithCapacity(int capacity)
         {
             _capacity = capacity;
             return this;
         }
 
-        public VenueBuilder WithType(VenueType type)
+        public IVenueBuilder WithType(VenueType type)
         {
             _type = type;
             return this;

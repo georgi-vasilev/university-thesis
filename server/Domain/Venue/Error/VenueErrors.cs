@@ -1,4 +1,4 @@
-﻿namespace Domain.Event.Error
+﻿namespace Domain.Venue.Error
 {
     using ErrorOr;
 
@@ -15,5 +15,9 @@
         public static readonly Error CapacityLessThanZeroError = Error.Validation(
             code: "Venue.InvalidCapacity",
             description: "Capacity must be greater than zero");
+
+        public static readonly Error VenueNotFoundError = Error.Validation(
+            code: "Venue.NotFound",
+            description: "Venue not found!");
     }
 }

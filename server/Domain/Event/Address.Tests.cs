@@ -1,6 +1,6 @@
 ﻿namespace Domain.Event
 {
-    using Domain.Event.Factory;
+    using Domain.Event.Builder;
     using FluentAssertions;
     using Xunit;
 

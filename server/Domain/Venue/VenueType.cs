@@ -1,6 +1,6 @@
-﻿namespace Domain.Event
+﻿namespace Domain.Venue
 {
-    internal enum VenueType
+    public enum VenueType
     {
         Bar,
         Club,
