@@ -2,12 +2,10 @@
 {
     using Domain.Event.Error;
     using Domain.Event.Repository;
-    using Domain.Venue;
     using Domain.Venue.Error;
     using Domain.Venue.Repository;
     using ErrorOr;
     using MediatR;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, ErrorOr<UpdateCommandOutputModel>>
     {

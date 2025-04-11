@@ -1,6 +1,6 @@
 ﻿namespace Domain.Host
 {
-    using Factory;
+    using Builder;
     using FluentAssertions;
     using Xunit;
 

@@ -17,12 +17,12 @@
 
         internal Host(
             ContactInfo contactInfo,
-            Guid venueId,
+            Guid? venueId = null,
             Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             ContactInfo = contactInfo;
-            VenueId = venueId;
+            VenueId = venueId ?? Guid.Empty;
         }
 
 

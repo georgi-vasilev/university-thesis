@@ -1,7 +1,7 @@
 ﻿namespace Domain.Host
 {
+    using Builder;
     using Error;
-    using Factory;
     using FluentAssertions;
     using Xunit;
 

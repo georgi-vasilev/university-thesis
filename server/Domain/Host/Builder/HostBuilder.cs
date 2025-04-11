@@ -1,6 +1,5 @@
-﻿namespace Domain.Host.Factory
+﻿namespace Domain.Host.Builder
 {
-    using Domain.Host.Builder;
     using Error;
     using ErrorOr;
 
@@ -34,11 +33,6 @@
             if (_contactInfo is null)
             {
                 return ContactInfoErrors.InvalidContactInfoError;
-            }
-
-            if (_venueId == Guid.Empty)
-            {
-                return HostErrors.NullLocationError;
             }
 
             return new Host(_contactInfo, _venueId, _id);
