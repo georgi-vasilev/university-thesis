@@ -6,28 +6,29 @@
     {
         public CreateHostCommandValidator()
         {
-            this.RuleFor(x => x.FirstName)
+            this.RuleFor(host => host.FirstName)
                 .NotEmpty()
                 .MinimumLength(3)
                 .MaximumLength(15);
 
-            this.RuleFor(x => x.LastName)
-             .NotEmpty()
-             .MinimumLength(3)
-             .MaximumLength(15);
+            this.RuleFor(host => host.LastName)
+                .NotEmpty()
+                .MinimumLength(3)
+                .MaximumLength(15);
 
-            this.RuleFor(x => x.PhoneNumber)
+            this.RuleFor(host => host.PhoneNumber)
                 .NotEmpty()
                 .MinimumLength(9) // without prefix
                 .MaximumLength(12); // with country code
 
-            this.RuleFor(x => x.Email)
+            this.RuleFor(host => host.Email)
                 .NotEmpty()
                 .EmailAddress();
 
-            this.RuleFor(x => x.InstagramHandler)
+            this.RuleFor(host => host.InstagramHandler)
                 .NotEmpty()
-                .MinimumLength(3);
+                .MinimumLength(3)
+                .MaximumLength(30);
         }
     }
 }

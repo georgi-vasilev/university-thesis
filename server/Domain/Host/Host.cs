@@ -63,7 +63,7 @@
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdateContactInfo(string phoneNumber)
+        public ErrorOr<Success> UpdatePhoneNumber(string phoneNumber)
         {
             var updatedContactInfo = ContactInfo.UpdatePhoneNumber(phoneNumber);
             if (updatedContactInfo.IsError)
