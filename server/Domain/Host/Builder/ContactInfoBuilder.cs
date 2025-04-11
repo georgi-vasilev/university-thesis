@@ -1,10 +1,10 @@
-﻿namespace Domain.Host.Factory
+﻿namespace Domain.Host.Builder
 {
     using Error;
     using ErrorOr;
     using System.ComponentModel.DataAnnotations;
 
-    internal class ContactInfoBuilder
+    internal class ContactInfoBuilder : IContactInfoBuilder
     {
         private string _firstName = default!;
         private string _lastName = default!;
@@ -13,37 +13,37 @@
         private string _instagramHandler = default!;
         private Guid _id = Guid.NewGuid();
 
-        public ContactInfoBuilder WithId(Guid id)
+        public IContactInfoBuilder WithId(Guid id)
         {
             _id = id;
             return this;
         }
 
-        public ContactInfoBuilder WithFirstName(string firstName)
+        public IContactInfoBuilder WithFirstName(string firstName)
         {
             _firstName = firstName;
             return this;
         }
 
-        public ContactInfoBuilder WithLastName(string lastName)
+        public IContactInfoBuilder WithLastName(string lastName)
         {
             _lastName = lastName;
             return this;
         }
 
-        public ContactInfoBuilder WithPhoneNumber(string phoneNumber)
+        public IContactInfoBuilder WithPhoneNumber(string phoneNumber)
         {
             _phoneNumber = phoneNumber;
             return this;
         }
 
-        public ContactInfoBuilder WithEmail(string emailAddress)
+        public IContactInfoBuilder WithEmail(string emailAddress)
         {
             _email = emailAddress;
             return this;
         }
 
-        public ContactInfoBuilder WithInstagramHandler(string instagramHandler)
+        public IContactInfoBuilder WithInstagramHandler(string instagramHandler)
         {
             _instagramHandler = instagramHandler;
             return this;

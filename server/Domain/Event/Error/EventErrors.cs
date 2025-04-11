@@ -76,5 +76,9 @@
         public static readonly Error CannotDeleteEventWithOrders = Error.Validation(
             code: "Event.Cancellation",
             description: "Cannot cancell event with sold tickets.");
+
+        public static readonly Error OverlappingEventError = Error.Validation(
+            code: "Event.Overlapping",
+            description: "Event overlaps with a different one.");
     }
 }

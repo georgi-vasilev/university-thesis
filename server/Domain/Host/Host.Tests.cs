@@ -1,7 +1,7 @@
 ﻿namespace Domain.Host
 {
+    using Builder;
     using Error;
-    using Factory;
     using FluentAssertions;
     using Xunit;
 
@@ -92,7 +92,7 @@
             var host = BuildValidHost();
             var newPhoneNumber = "999-888-7777";
 
-            var result = host.UpdateContactInfo(newPhoneNumber);
+            var result = host.UpdatePhoneNumber(newPhoneNumber);
 
             result.IsError.Should().BeFalse();
             host.ContactInfo.PhoneNumber.Should().Be(newPhoneNumber);
@@ -104,7 +104,7 @@
             var host = BuildValidHost();
             var invalidPhoneNumber = "";
 
-            var result = host.UpdateContactInfo(invalidPhoneNumber);
+            var result = host.UpdatePhoneNumber(invalidPhoneNumber);
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(ContactInfoErrors.InvalidPhoneNumberError);

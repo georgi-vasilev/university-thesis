@@ -6,7 +6,6 @@
 
     public class Event : IAggregateRoot
     {
-        private readonly Guid _hostId;
         private readonly HashSet<Guid> _ticketIds = new HashSet<Guid>();
         private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
 
@@ -19,7 +18,6 @@
         public TimeRange Time { get; private set; }
         public Guid VenueId { get; private set; }
         public EventStatus Status { get; private set; }
-        public int Capacity { get; private set; }
         public int TicketCount
         {
             get => this._ticketIds.Count;
@@ -32,7 +30,6 @@
             TimeRange time,
             Guid venueId,
             Guid hostId,
-            int capacity,
             Guid? id = null)
         {
             Name = name;
@@ -41,14 +38,13 @@
             Time = time;
             VenueId = venueId;
             HostId = hostId;
-            Capacity = capacity;
             Id = id ?? Guid.NewGuid();
             Status = EventStatus.Active;
         }
 
-        public ErrorOr<Success> AddTicket(Guid ticketId)
+        public ErrorOr<Success> AddTicket(Guid ticketId, int venueCapacity)
         {
-            if (_ticketIds.Count >= Capacity)
+            if (_ticketIds.Count >= venueCapacity)
             {
                 return EventErrors.CapacityExceededError;
             }
@@ -106,7 +102,7 @@
         }
 
 
-        public ErrorOr<Success> UpdateDetails(string name,
+        public ErrorOr<Event> UpdateDetails(string name,
             string description,
             DateOnly date,
             TimeRange time,
@@ -141,7 +137,7 @@
             // TODO: Add logic to raise domain event
             // DomainEvents.Add(new EventDetailsUpdatedEvent(Id, name, description, date, time, venueId));
 
-            return Result.Success;
+            return this;
         }
 
         private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);

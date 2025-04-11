@@ -10,7 +10,6 @@
         IEventBuilder WithTime(TimeRange time);
         IEventBuilder WithVenue(Guid venueId);
         IEventBuilder WithHostId(Guid hostId);
-        IEventBuilder WithCapacity(int capacity);
         IEventBuilder WithId(Guid id);
     }
 }

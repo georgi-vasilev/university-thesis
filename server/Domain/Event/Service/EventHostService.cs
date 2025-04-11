@@ -7,24 +7,28 @@
     using Order;
     using Order.Repository;
     using Repository;
+    using System.Threading;
 
     internal class EventHostService : IEventHostService
     {
-        private readonly IEventRepository _eventRepository;
-        private readonly IHostRepository _hostRepository;
+        private readonly IEventDomainRepository _eventRepository;
+        private readonly IHostDomainRepository _hostRepository;
         private readonly IOrderRepository _orderRepository;
 
-        public EventHostService(IEventRepository eventRepository, IHostRepository hostRepository, IOrderRepository orderRepository)
+        public EventHostService(
+            IEventDomainRepository eventRepository,
+            IHostDomainRepository hostRepository,
+            IOrderRepository orderRepository)
         {
             _eventRepository = eventRepository;
             _hostRepository = hostRepository;
             _orderRepository = orderRepository;
         }
 
-        public async Task<ErrorOr<Success>> CancelEventForHostAsync(Host host, Guid eventId)
+        public async Task<ErrorOr<Success>> CancelEventForHostAsync(Host host, Guid eventId, CancellationToken cancellationToken)
         {
 
-            var @event = await _eventRepository.GetByIdAsync(eventId);  
+            var @event = await _eventRepository.GetByIdAsync(eventId, cancellationToken);  
             if (@event == null)
             {
                 return EventErrors.EventNotFoundError;
@@ -41,20 +45,20 @@
                 return changeResult.FirstError;
             }
 
-            await _eventRepository.UpdateAsync(@event);
+            await _eventRepository.UpdateAsync(@event, cancellationToken);
 
             //TODO: dispatch event
             return Result.Success;
         }
 
-        public async Task<ErrorOr<Success>> CreateEventForHostAsync(Host host, Event @event)
+        public async Task<ErrorOr<Success>> CreateEventForHostAsync(Host host, Event @event, CancellationToken cancellationToken)
         {
             if (host.Id != @event.HostId)
             {
                 return EventErrors.EventDoesNotBelongToHostError;
             }
 
-            await _eventRepository.AddAsync(@event);
+            await _eventRepository.AddAsync(@event, cancellationToken);
 
             var addResult = host.AddOrganizedEvent(@event.Id);
             if (addResult.IsError)
@@ -62,15 +66,15 @@
                 return addResult.FirstError;
             }
 
-            await _hostRepository.UpdateAsync(host);
+            await _hostRepository.UpdateAsync(host, cancellationToken);
 
             // TODO: dispatch event
             return Result.Success;
         }
 
-        public async Task<ErrorOr<Success>> RemoveEventFromHostAsync(Host host, Guid eventId)
+        public async Task<ErrorOr<Success>> RemoveEventFromHostAsync(Host host, Guid eventId, CancellationToken cancellationToken)
         {
-            var @event = await _eventRepository.GetByIdAsync(eventId);
+            var @event = await _eventRepository.GetByIdAsync(eventId, cancellationToken);
             if (@event is null)
             {
                 return EventErrors.EventNotFoundError;
@@ -93,8 +97,8 @@
                 return removeResult.FirstError;
             }
 
-            await _hostRepository.UpdateAsync(host);
-            await _eventRepository.DeleteAsync(eventId);
+            await _hostRepository.UpdateAsync(host, cancellationToken);
+            await _eventRepository.DeleteAsync(eventId, cancellationToken);
 
             return Result.Success;
         }

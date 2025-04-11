@@ -17,12 +17,12 @@
 
         internal Host(
             ContactInfo contactInfo,
-            Guid venueId,
+            Guid? venueId = null,
             Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             ContactInfo = contactInfo;
-            VenueId = venueId;
+            VenueId = venueId ?? Guid.Empty;
         }
 
 
@@ -63,7 +63,7 @@
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdateContactInfo(string phoneNumber)
+        public ErrorOr<Success> UpdatePhoneNumber(string phoneNumber)
         {
             var updatedContactInfo = ContactInfo.UpdatePhoneNumber(phoneNumber);
             if (updatedContactInfo.IsError)

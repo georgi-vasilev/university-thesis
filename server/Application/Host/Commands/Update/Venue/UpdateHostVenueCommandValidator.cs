@@ -1,0 +1,13 @@
+﻿namespace Application.Host.Commands.Update.Venue
+{
+    using FluentValidation;
+
+    public class UpdateHostVenueCommandValidator : AbstractValidator<UpdateHostVenueCommand>
+    {
+        public UpdateHostVenueCommandValidator()
+        {
+            this.RuleFor(host => host.Id).NotEmpty();
+            this.RuleFor(host => host.VenueId).NotEmpty();
+        }
+    }
+}

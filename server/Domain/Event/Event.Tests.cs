@@ -1,9 +1,11 @@
 ﻿namespace Domain.Event
 {
-    using Domain.Event.Error;
-    using Domain.Event.Factory;
+    using Builder;
+    using Error;
     using FluentAssertions;
     using System;
+    using Venue;
+    using Venue.Builder;
     using Xunit;
 
     public class AdditionalEventTests
@@ -85,7 +87,7 @@
             var initialTicketCount = @event.TicketCount;
 
             var ticketId = Guid.NewGuid();
-            var result = @event.AddTicket(ticketId);
+            var result = @event.AddTicket(ticketId, 4);
 
             result.IsError.Should().BeFalse();
             @event.TicketCount.Should().Be(initialTicketCount + 1);
@@ -99,15 +101,14 @@
                 .WithDescription("DnB at mixtape")
                 .WithDate(new DateOnly(2026, 8, 7))
                 .WithTime(new TimeRange(new DateTime(10, 0), new DateTime(18, 0)))
-                .WithCapacity(1)
                 .WithVenue(BuildValueEvent().VenueId)
                 .WithHostId(Guid.NewGuid())
                 .Build().Value;
 
-            var firstResult = smallCapacityEvent.AddTicket(Guid.NewGuid());
+            var firstResult = smallCapacityEvent.AddTicket(Guid.NewGuid(), 4);
             firstResult.IsError.Should().BeFalse();
 
-            var secondResult = smallCapacityEvent.AddTicket(Guid.NewGuid());
+            var secondResult = smallCapacityEvent.AddTicket(Guid.NewGuid(), 1);
 
             secondResult.IsError.Should().BeTrue();
             secondResult.FirstError.Should().Be(EventErrors.CapacityExceededError);
@@ -163,7 +164,6 @@
                 .WithDate(new DateOnly(2026, 8, 7))
                 .WithTime(timeRange)
                 .WithVenue(venue.Id)
-                .WithCapacity(1)
                 .WithHostId(organizerId)
                 .WithId(eventId)
                 .Build();

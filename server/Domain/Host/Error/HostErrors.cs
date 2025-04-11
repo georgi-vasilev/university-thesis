@@ -19,5 +19,9 @@
         public static readonly Error InvalidVenueError = Error.Validation(
             code: "Host.Venue",
             description: "Venue Id cannot be null.");
+
+        public static readonly Error HostNotFoundError = Error.Validation(
+            code: "Host.NotFound",
+            description: "Host not found.");
     }
 }

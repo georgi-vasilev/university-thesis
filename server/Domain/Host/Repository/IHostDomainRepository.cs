@@ -2,7 +2,7 @@
 {
     using Common;
 
-    public interface IHostRepository : IDomainRepository<Host>
+    public interface IHostDomainRepository : IDomainRepository<Host>
     {
     }
 }
