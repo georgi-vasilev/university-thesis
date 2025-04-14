@@ -1,12 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Order.Commands.Complete
+﻿namespace Application.Order.Commands.Complete
 {
-    internal class OrderCompleteCommandHandler
+    using Domain.Order.Error;
+    using Domain.Order.Repository;
+    using ErrorOr;
+    using MediatR;
+
+    public class OrderCompleteCommandHandler : IRequestHandler<OrderCompleteCommand, ErrorOr<OrderCompleteOutputModel>>
     {
+        private readonly IOrderRepository _orderRepository;
+
+        public OrderCompleteCommandHandler(IOrderRepository orderRepository) 
+            => _orderRepository = orderRepository;
+
+        public async Task<ErrorOr<OrderCompleteOutputModel>> Handle(OrderCompleteCommand request, CancellationToken cancellationToken)
+        {
+            var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
+            if (order is null)
+            {
+                return OrderError.OrderNotFoundError;
+            }
+
+            var result = order.CompleteOrder();
+            if (result.IsError)
+            {
+                return result.FirstError;
+            }
+
+            await _orderRepository.UpdateAsync(order, cancellationToken);
+
+            return new OrderCompleteOutputModel(order.Id, order.Status);
+        }
     }
 }

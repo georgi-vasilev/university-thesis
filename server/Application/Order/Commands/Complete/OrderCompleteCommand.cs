@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Order.Commands.Complete
+﻿namespace Application.Order.Commands.Complete
 {
-    internal class OrderCompleteCommand
+    using ErrorOr;
+    using MediatR;
+
+    public record OrderCompleteCommand : IRequest<ErrorOr<OrderCompleteOutputModel>>
     {
+        public Guid OrderId { get; set; }
     }
 }
