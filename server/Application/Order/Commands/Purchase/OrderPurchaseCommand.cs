@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Order.Commands.Purchase
+﻿namespace Application.Order.Commands.Purchase
 {
-    internal class OrderPurchaseCommand
+    using Domain.Common.ValueObject;
+    using Domain.Order;
+    using ErrorOr;
+    using MediatR;
+
+    public record OrderPurchaseCommand : IRequest<ErrorOr<Success>>
     {
+        public Guid BuyerId { get; set; }
+        public Guid EventId { get; set; }
+        public Money PaymentAmount { get; set; } = default!;
+        public TicketType TicketType { get; set; }
     }
 }
