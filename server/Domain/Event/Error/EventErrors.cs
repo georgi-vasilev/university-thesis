@@ -80,5 +80,9 @@
         public static readonly Error OverlappingEventError = Error.Validation(
             code: "Event.Overlapping",
             description: "Event overlaps with a different one.");
+
+        public static readonly Error UnexpectedError = Error.Validation(
+            code: "Event.CreateEventCommand",
+            description: "Unexpected error occurred");
     }
 }

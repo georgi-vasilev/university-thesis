@@ -23,5 +23,9 @@
         public static readonly Error HostNotFoundError = Error.Validation(
             code: "Host.NotFound",
             description: "Host not found.");
+
+        public static readonly Error UnexpectedError = Error.Validation(
+            code: "Host.CreateHostCommand",
+            description: "Unexpected error occurred");
     }
 }
