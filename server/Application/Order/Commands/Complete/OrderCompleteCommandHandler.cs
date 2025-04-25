@@ -8,11 +8,11 @@
 
     public class OrderCompleteCommandHandler : IRequestHandler<OrderCompleteCommand, ErrorOr<OrderCompleteOutputModel>>
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDomainRepository _orderRepository;
         private readonly ILogger<OrderCompleteCommandHandler> _logger;
 
         public OrderCompleteCommandHandler(
-            IOrderRepository orderRepository,
+            IOrderDomainRepository orderRepository,
             ILogger<OrderCompleteCommandHandler> logger)
         {
             _orderRepository = orderRepository;

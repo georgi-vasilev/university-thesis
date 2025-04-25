@@ -20,7 +20,7 @@
     public class EventOrderServiceTests
     {
         private readonly Mock<IEventDomainRepository> _mockEventRepository;
-        private readonly Mock<IOrderRepository> _mockOrderRepository;
+        private readonly Mock<IOrderDomainRepository> _mockOrderRepository;
         private readonly Mock<IOrderBuilder> _mockOrderBuilder;
         private readonly Mock<ITicketBuilder> _mockTicketBuilder;
         private readonly Mock<IVenueDomainRepository> _mockVenueRepository;
@@ -29,7 +29,7 @@
         public EventOrderServiceTests()
         {
             _mockEventRepository = new Mock<IEventDomainRepository>();
-            _mockOrderRepository = new Mock<IOrderRepository>();
+            _mockOrderRepository = new Mock<IOrderDomainRepository>();
             _mockOrderBuilder = new Mock<IOrderBuilder>();
             _mockTicketBuilder = new Mock<ITicketBuilder>();
             _mockVenueRepository = new Mock<IVenueDomainRepository>();

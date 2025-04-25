@@ -13,12 +13,12 @@
     {
         private readonly IEventDomainRepository _eventRepository;
         private readonly IHostDomainRepository _hostRepository;
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDomainRepository _orderRepository;
 
         public EventHostService(
             IEventDomainRepository eventRepository,
             IHostDomainRepository hostRepository,
-            IOrderRepository orderRepository)
+            IOrderDomainRepository orderRepository)
         {
             _eventRepository = eventRepository;
             _hostRepository = hostRepository;

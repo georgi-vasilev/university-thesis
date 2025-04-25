@@ -19,7 +19,7 @@
     {
         private readonly Mock<IEventDomainRepository> _mockEventRepository;
         private readonly Mock<IHostDomainRepository> _mockHostRepository;
-        private readonly Mock<IOrderRepository> _mockOrderRepository;
+        private readonly Mock<IOrderDomainRepository> _mockOrderRepository;
         private readonly Mock<ITicketBuilder> _mockTicketBuilder;
         private readonly IEventHostService _service;
 
@@ -27,7 +27,7 @@
         {
             _mockEventRepository = new Mock<IEventDomainRepository>();
             _mockHostRepository = new Mock<IHostDomainRepository>();
-            _mockOrderRepository = new Mock<IOrderRepository>();
+            _mockOrderRepository = new Mock<IOrderDomainRepository>();
             _mockTicketBuilder = new Mock<ITicketBuilder>();
             _service = new EventHostService(_mockEventRepository.Object, _mockHostRepository.Object, _mockOrderRepository.Object);
         }

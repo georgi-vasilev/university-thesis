@@ -16,14 +16,14 @@
     internal class EventOrderService : IEventOrderService
     {
         private readonly IEventDomainRepository _eventRepository;
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDomainRepository _orderRepository;
         private readonly IVenueDomainRepository _venueRepository;
         private readonly IOrderBuilder _orderBuilder;
         private readonly ITicketBuilder _ticketBuilder;
 
         public EventOrderService(
             IEventDomainRepository eventRepository,
-            IOrderRepository orderRepository,
+            IOrderDomainRepository orderRepository,
             IOrderBuilder orderBuilder,
             ITicketBuilder ticketBuilder,
             IVenueDomainRepository venueRepository)

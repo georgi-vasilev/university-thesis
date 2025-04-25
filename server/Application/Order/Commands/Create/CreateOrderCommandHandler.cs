@@ -11,12 +11,12 @@
 
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ErrorOr<CreateOrderOutputModel>>
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDomainRepository _orderRepository;
         private readonly IOrderBuilder _orderBuilder;
         private readonly ILogger<CreateOrderCommandHandler> _logger;
 
         public CreateOrderCommandHandler(
-            IOrderRepository orderRepository,
+            IOrderDomainRepository orderRepository,
             IOrderBuilder orderBuilder,
             ILogger<CreateOrderCommandHandler> logger)
         {

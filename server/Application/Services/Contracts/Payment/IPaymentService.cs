@@ -1,4 +1,4 @@
-﻿namespace Application.Services.Contracts
+﻿namespace Application.Services.Contracts.Payment
 {
     using Domain.Common.ValueObject;
     using ErrorOr;
