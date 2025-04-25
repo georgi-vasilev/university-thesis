@@ -7,7 +7,7 @@
         {
             RuleFor(cmd => cmd.BuyerId)
                 .NotEmpty()
-                .WithMessage("Buyer ID must be provided.");
+                    .WithMessage("Buyer ID must be provided.");
         }
     }
 }

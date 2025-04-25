@@ -45,7 +45,7 @@
                 return EventErrors.EventNotFoundError;
             }
 
-            var changeStatusResult = @event.ChangeStatus(request.Statue);
+            var changeStatusResult = @event.ChangeStatus(request.Status);
 
             if (changeStatusResult.IsError)
             {

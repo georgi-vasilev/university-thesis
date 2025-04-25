@@ -7,11 +7,14 @@ namespace Application.Host.Commands.Update.Email
         public UpdateEmailCommandValidator()
         {
             this.RuleFor(host => host.Id)
-                .NotEmpty();
+                .NotEmpty()
+                    .WithMessage("Host id must be provided");
 
             this.RuleFor(host => host.Email)
-                .NotEmpty()
-                .EmailAddress();
+               .NotEmpty()
+                   .WithMessage("Email cannot be empty string.")
+               .EmailAddress()
+                   .WithMessage("Email must be valid email address.");
         }
     }
 }
