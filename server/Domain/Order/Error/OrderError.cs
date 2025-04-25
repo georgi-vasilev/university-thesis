@@ -39,5 +39,10 @@
         public static readonly Error TicketAlreadyAddedError = Error.Validation(
             code: "Order.Ticket",
             description: "A ticket with the same identifier has already been added to the order.");
+
+
+        public static readonly Error UnexpectedError = Error.Validation(
+            code: "Order.OrderCommandHandler",
+            description: "Unexpected error occurred");
     }
 }
