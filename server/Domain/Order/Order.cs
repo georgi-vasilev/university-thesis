@@ -75,6 +75,11 @@
 
         public ErrorOr<Success> CompleteOrder()
         {
+            if (Status == OrderStatus.Completed)
+            {
+                return OrderError.OrderAlreadyCompletedError;
+            }
+
             if (_tickets.Count == 0)
             {
                 return OrderError.NoTicketsInOrderError;

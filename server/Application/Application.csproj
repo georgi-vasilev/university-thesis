@@ -16,10 +16,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Order\Commands\Cancel\" />
-    <Folder Include="Order\Commands\Complete\" />
-    <Folder Include="Order\Commands\Purchase\" />
-  </ItemGroup>
-
 </Project>

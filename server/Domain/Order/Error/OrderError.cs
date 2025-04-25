@@ -2,7 +2,7 @@
 {
     using ErrorOr;
 
-    internal static class OrderError
+    public static class OrderError
     {
         public static readonly Error TicketNotFoundError = Error.Validation(
             code: "Order.Ticket",

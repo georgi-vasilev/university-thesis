@@ -6,11 +6,19 @@
     {
         public CancelEventCommandValidator()
         {
-            this.RuleFor(x => x.EventId).NotEmpty();
-            this.RuleFor(x => x.HostId).NotEmpty();
-            this.RuleFor(x => x.Statue)
+            this.RuleFor(x => x.EventId)
+                .NotEmpty()
+                    .WithMessage("Event id must be provided");
+
+            this.RuleFor(x => x.HostId)
+                .NotEmpty()
+                    .WithMessage("Host id must be provided");
+
+            this.RuleFor(x => x.Status)
                 .NotNull()
-                .IsInEnum();
+                    .WithMessage("Status must be provided")
+                .IsInEnum()
+                    .WithMessage("Status must be valid.");
         }
     }
 }

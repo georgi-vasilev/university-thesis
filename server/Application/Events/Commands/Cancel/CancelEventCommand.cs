@@ -8,6 +8,6 @@
     {
         public Guid HostId { get; set; }
         public Guid EventId { get; set; }
-        public EventStatus Statue { get; set; }
+        public EventStatus Status { get; set; }
     }
 }
