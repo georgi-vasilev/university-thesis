@@ -1,5 +1,6 @@
 ﻿namespace Application.Order.Commands.Purchase
 {
+    using Application.Services.Contracts.Payment;
     using Complete;
     using Domain.Event;
     using Domain.Event.Error;
@@ -16,7 +17,7 @@
 
     internal class OrderPurchaseCommandHandler : IRequestHandler<OrderPurchaseCommand, ErrorOr<Success>>
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDomainRepository _orderRepository;
         private readonly IEventDomainRepository _eventRepository;
         private readonly IVenueDomainRepository _venueRepository;
         private readonly IPaymentService _paymentService;
@@ -26,7 +27,7 @@
         private readonly ILogger<OrderPurchaseCommandHandler> _logger;
 
         public OrderPurchaseCommandHandler(
-            IOrderRepository orderRepository,
+            IOrderDomainRepository orderRepository,
             IEventDomainRepository eventRepository,
             IVenueDomainRepository venueRepository,
             IPaymentService paymentService,

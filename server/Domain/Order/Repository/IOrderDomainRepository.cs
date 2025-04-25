@@ -2,7 +2,7 @@
 {
     using Common;
 
-    public interface IOrderRepository : IDomainRepository<Order>
+    public interface IOrderDomainRepository : IDomainRepository<Order>
     {
         Task<Order> GetOrderAsync(Func<Order, bool> predicate);
         Task<List<Order>> GetOrdersForEventAsync(Guid eventId);

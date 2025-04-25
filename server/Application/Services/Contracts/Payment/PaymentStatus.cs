@@ -1,4 +1,4 @@
-﻿namespace Application.Services.Contracts
+﻿namespace Application.Services.Contracts.Payment
 {
     public enum PaymentStatus
     {
