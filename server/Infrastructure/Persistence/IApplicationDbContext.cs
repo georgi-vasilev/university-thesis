@@ -3,13 +3,15 @@
     using Domain.Event;
     using Domain.Host;
     using Domain.Order;
+    using Domain.Venue;
     using Microsoft.EntityFrameworkCore;
 
-    internal interface IApplicationDbContext
+    public interface IApplicationDbContext
     {
         DbSet<Event> Events { get; }
         DbSet<Host> Hosts { get; }
         DbSet<Order> Orders { get; }
+        DbSet<Venue> Venue { get; }
         Task<int> SaveChangesAsync(CancellationToken ct = default);
     }
 }

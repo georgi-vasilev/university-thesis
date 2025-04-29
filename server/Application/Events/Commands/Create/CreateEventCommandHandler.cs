@@ -1,5 +1,6 @@
 ﻿namespace Application.Events.Commands.Create
 {
+    using Domain.Event;
     using Domain.Event.Builder;
     using Domain.Event.Error;
     using Domain.Event.Repository;
@@ -36,8 +37,9 @@
             _logger.LogInformation(
                 "Handling CreateEventCommand for Host {HostId}, Venue {VenueId}, Date {Date}",
                 request.HostId, request.VenueId, request.Date);
+            var time = TimeRange.FromDateTimes(request.StartTime, request.EndTime).Value;
 
-            var schedulingResult = await _eventScheduling.ValidateNewEventAsync(request.VenueId, request.Date, request.Time, cancellationToken);
+            var schedulingResult = await _eventScheduling.ValidateNewEventAsync(request.VenueId, request.Date, time, cancellationToken);
             if (schedulingResult.IsError)
             {
                 _logger.LogWarning(
@@ -50,7 +52,7 @@
                 .WithName(request.Name)
                 .WithDescription(request.Description)
                 .WithDate(request.Date)
-                .WithTime(request.Time)
+                .WithTime(time)
                 .WithHostId(request.HostId)
                 .WithVenue(request.VenueId)
                 .Build();

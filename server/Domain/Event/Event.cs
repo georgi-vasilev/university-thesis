@@ -23,6 +23,8 @@
             get => this._ticketIds.Count;
         }
 
+        private Event() { }
+
         internal Event(
             string name,
             string description,

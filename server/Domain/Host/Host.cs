@@ -15,6 +15,11 @@
         public Guid VenueId { get; private set; }
         public IReadOnlyCollection<Guid> OrganizedEventIds => _organizedEventIds;
 
+        private Host()
+        {
+            
+        }
+
         internal Host(
             ContactInfo contactInfo,
             Guid? venueId = null,

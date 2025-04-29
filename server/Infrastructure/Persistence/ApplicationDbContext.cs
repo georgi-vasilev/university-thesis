@@ -3,19 +3,23 @@
     using Domain.Event;
     using Domain.Host;
     using Domain.Order;
+    using Domain.Venue;
+    using Infrastructure.Authentication;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    internal class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        : base(options)
         {
         }
-
 
         public DbSet<Event> Events { get; set; } = default!;
         public DbSet<Host> Hosts { get; set; } = default!;
         public DbSet<Order> Orders { get; set; } = default!;
+        public DbSet<Ticket> Tickets { get; set; } = default!;
+        public DbSet<Venue> Venue { get; set; } = default!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -25,7 +29,6 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //TODO: Add configuration and apply all IEntityTypeConfiguration<> from this assembly
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }

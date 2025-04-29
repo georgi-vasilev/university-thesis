@@ -7,6 +7,11 @@
         public PaymentStatus Status { get; }
         public string TransactionId { get; }
 
+        private PaymentDetails()
+        {
+            
+        }
+
         public PaymentDetails(decimal amount, string paymentMethod, PaymentStatus status, string transactionId)
         {
             Amount = amount;

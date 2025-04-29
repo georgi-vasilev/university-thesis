@@ -1,5 +1,6 @@
 ﻿namespace Domain.Event.Service
 {
+    using Common;
     using Common.ValueObject;
     using ErrorOr;
     using Host;
@@ -7,7 +8,7 @@
     using System;
     using System.Threading.Tasks;
 
-    public interface IEventOrderService
+    public interface IEventOrderService : IDomainService
     {
         Task<ErrorOr<Success>> PurchaseTicketAsync(
             Guid buyerId,

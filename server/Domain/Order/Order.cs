@@ -17,6 +17,10 @@
         public PaymentDetails? Payment { get; private set; }
         public IReadOnlyCollection<Ticket> Tickets => _tickets;
 
+        private Order()
+        {
+            
+        }
         internal Order(Guid buyerId, Guid? id = null)
         {
             BuyerId = buyerId;

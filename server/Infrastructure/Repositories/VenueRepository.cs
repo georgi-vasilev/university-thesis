@@ -2,27 +2,43 @@
 {
     using Domain.Venue;
     using Domain.Venue.Repository;
+    using Microsoft.EntityFrameworkCore;
+    using Persistence;
 
-    public class VenueRepository : IVenueDomainRepository
+    internal class VenueRepository : IVenueDomainRepository
     {
-        public Task AddAsync(Venue aggregate, CancellationToken cancellationToken)
+        private readonly IApplicationDbContext _context;
+
+        public VenueRepository(IApplicationDbContext context)
+            => _context = context;
+
+        public async Task AddAsync(Venue aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Venue.Add(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Venue.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (entity is not null)
+            {
+                _context.Venue.Remove(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
 
-        public Task<Venue?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Venue?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _context.Venue
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
-        public Task UpdateAsync(Venue aggregate, CancellationToken cancellationToken)
+        public async Task UpdateAsync(Venue aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Venue.Update(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

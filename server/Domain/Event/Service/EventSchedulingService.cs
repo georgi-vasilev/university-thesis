@@ -4,7 +4,7 @@
     using ErrorOr;
     using Repository;
 
-    public class EventSchedulingService : IEventSchedulingService
+    internal class EventSchedulingService : IEventSchedulingService
     {
         private readonly IEventDomainRepository _eventRepository;
 
