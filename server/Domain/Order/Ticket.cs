@@ -15,6 +15,11 @@
         public TicketType Type { get; private set; }
         public Guid? AttendeeId { get; private set; }
 
+        private Ticket()
+        {
+            
+        }
+
         internal Ticket(Guid eventId, Money price, TicketType type, Guid? id = null)
         {
             EventId = eventId;

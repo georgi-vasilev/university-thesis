@@ -1,7 +1,8 @@
 ﻿namespace Domain
 {
     using Common;
-    using Event.Service;
+    using Domain.Host.Builder;
+    using Domain.Order.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using System.Reflection;
 
@@ -14,21 +15,24 @@
         public static IServiceCollection AddDomain(this IServiceCollection services)
             => services
                 .AddBuilders()
-                .AddDomainServices();
+                .AddDomainServices()
+                .AddScoped<IHostBuilder, HostBuilder>()
+                .AddScoped<ITicketBuilder, TicketBuilder>()
+                .AddScoped<IContactInfoBuilder, ContactInfoBuilder>();
 
         private static IServiceCollection AddBuilders(this IServiceCollection services)
             => services
                 .Scan(scan => scan
                     .FromAssemblies(Assembly.GetExecutingAssembly())
-                    .AddClasses(classes => classes.AssignableTo(typeof(IBuilder<>)))
-                    .AsImplementedInterfaces()
+                    .AddClasses(classes => classes.AssignableTo(typeof(IBuilder<>)), publicOnly: false)
+                    .AsMatchingInterface()
                     .WithTransientLifetime());
 
         private static IServiceCollection AddDomainServices(this IServiceCollection services)
             => services
                 .Scan(scan => scan
                     .FromAssemblies(Assembly.GetExecutingAssembly())
-                    .AddClasses(classes => classes.AssignableTo(typeof(IEventHostService)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(IDomainService)), publicOnly: false)
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
     }

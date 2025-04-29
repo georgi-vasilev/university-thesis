@@ -2,37 +2,63 @@
 {
     using Domain.Event;
     using Domain.Event.Repository;
+    using Microsoft.EntityFrameworkCore;
+    using Persistence;
 
     public class EventRepository : IEventDomainRepository
     {
-        public Task AddAsync(Event aggregate, CancellationToken cancellationToken)
+        private readonly IApplicationDbContext _context;
+
+        public EventRepository(IApplicationDbContext context) 
+            => _context = context;
+
+        public async Task AddAsync(Event aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Events.Add(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Events.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (entity is not null)
+            {
+                _context.Events.Remove(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
 
-        public Task<Event?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Event?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _context.Events
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
-        public Task<Event> GetEventByFilterAsync(Func<Event, bool> predicate, CancellationToken cancellationToken)
+        public async Task<Event?> GetEventByFilterAsync(Func<Event, bool> predicate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var all = await _context
+                .Events
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            return all.FirstOrDefault(predicate);
         }
 
-        public Task<IEnumerable<Event>> GetEventsByFilter(Func<Event, bool> predicate, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Event>> GetEventsByFilter(Func<Event, bool> predicate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var all = await _context
+                .Events
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            return all.Where(predicate);
         }
 
-        public Task UpdateAsync(Event aggregate, CancellationToken cancellationToken)
+        public async Task UpdateAsync(Event aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Events.Update(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

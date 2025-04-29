@@ -4,6 +4,7 @@
     using Domain.Event.Repository;
     using Domain.Host.Repository;
     using Domain.Order.Repository;
+    using Domain.Venue.Repository;
     using Infrastructure.Persistence;
     using Infrastructure.Services;
     using Microsoft.EntityFrameworkCore;
@@ -26,17 +27,21 @@
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .AddDbContext<ApplicationDbContext>(opts =>
-                    opts.UseNpgsql(
-                        configuration.GetConnectionString("DefaultConnection"),
-                        pg => pg.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)))
-                .AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
+            .AddDbContext<ApplicationDbContext>(opts =>
+                opts.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    sql => sql.MigrationsAssembly(
+                        typeof(ApplicationDbContext).Assembly.FullName)))
+            .AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>())
+            .AddTransient<IInitializer, DatabaseInitializer>();
+
 
         private static IServiceCollection AddRepositories(this IServiceCollection services)
             => services
                 .AddScoped<IEventDomainRepository, EventRepository>()
                 .AddScoped<IHostDomainRepository, HostRepository>()
-                .AddScoped<IOrderDomainRepository, OrderRepository>();
+                .AddScoped<IOrderDomainRepository, OrderRepository>()
+                .AddScoped<IVenueDomainRepository, VenueRepository>();
 
         //private static IServiceCollection AddAuth(
         //    this IServiceCollection services,

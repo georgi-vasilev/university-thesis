@@ -8,6 +8,11 @@
         public string Country { get; }
         public string ZipCode { get; }
 
+        private Address()
+        {
+
+        }
+
         internal Address(string street, string city, string state, string country, string zipCode)
         {
             Street = street;

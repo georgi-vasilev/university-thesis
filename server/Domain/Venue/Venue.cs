@@ -13,6 +13,10 @@
         public int Capacity { get; private set; }
         public VenueType Type { get; private set; }
 
+        private Venue()
+        {
+            
+        }
 
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 

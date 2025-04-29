@@ -2,37 +2,66 @@
 {
     using Domain.Order;
     using Domain.Order.Repository;
+    using Microsoft.EntityFrameworkCore;
+    using Persistence;
 
-    public class OrderRepository : IOrderDomainRepository
+    internal class OrderRepository : IOrderDomainRepository
     {
-        public Task AddAsync(Order aggregate, CancellationToken cancellationToken)
+        private readonly IApplicationDbContext _context;
+
+        public OrderRepository(IApplicationDbContext context) 
+            => _context = context;
+
+        public async Task AddAsync(Order aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Orders.Add(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Orders.FindAsync(new object[] { id }, cancellationToken);
+            if (entity is not null)
+            {
+                _context.Orders.Remove(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
 
-        public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _context.Orders
+                .Include(x => x.Tickets)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
         }
 
-        public Task<Order> GetOrderAsync(Func<Order, bool> predicate)
+        public async Task<Order?> GetOrderAsync(Func<Order, bool> predicate)
         {
-            throw new NotImplementedException();
+            var all = await _context.Orders
+                .Include(x => x.Tickets)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return all.FirstOrDefault(predicate);
         }
 
-        public Task<List<Order>> GetOrdersForEventAsync(Guid eventId)
+        public async Task<List<Order>> GetOrdersForEventAsync(Guid eventId)
         {
-            throw new NotImplementedException();
+            var all = await _context.Orders
+                .Include(x => x.Tickets)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return all
+                .Where(o => o.Tickets.Any(t => t.EventId == eventId))
+                .ToList();
         }
 
-        public Task UpdateAsync(Order aggregate, CancellationToken cancellationToken)
+        public async Task UpdateAsync(Order aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.Orders.Update(aggregate);
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
