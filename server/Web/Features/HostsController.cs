@@ -8,42 +8,31 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
+    [ApiController]
     [Route("api/[controller]")]
     public class HostsController : ApiController
     {
-        /// <summary>
-        /// Registers a new Host.
-        /// </summary>
+
         [HttpPost]
-        public Task<ActionResult<CreateHostOutputModel>> Create(CreateHostCommand command)
+        public Task<ActionResult<CreateHostOutputModel>> Create([FromBody] CreateHostCommand command)
             => Send(command);
 
-        /// <summary>
-        /// Updates a Host’s email address.
-        /// </summary>
         [HttpPut("email")]
-        public Task<ActionResult<UpdateEmailOutputModel>> UpdateEmail(UpdateEmailCommand command)
+        public Task<ActionResult<UpdateEmailOutputModel>> UpdateEmail([FromBody] UpdateEmailCommand command)
             => Send(command);
 
-        /// <summary>
-        /// Updates a Host’s phone number.
-        /// </summary>
+
         [HttpPut("phone-number")]
-        public Task<ActionResult<UpdatePhoneNumberOutputModel>> UpdatePhoneNumber(UpdatePhoneNumberCommand command)
+        public Task<ActionResult<UpdatePhoneNumberOutputModel>> UpdatePhoneNumber([FromBody] UpdatePhoneNumberCommand command)
             => Send(command);
 
-        /// <summary>
-        /// Updates a Host’s Instagram handle.
-        /// </summary>
+
         [HttpPut("instagram")]
-        public Task<ActionResult<UpdateInstagramHandlerOutputModel>> UpdateInstagram(UpdateInstagramHandlerCommand command)
+        public Task<ActionResult<UpdateInstagramHandlerOutputModel>> UpdateInstagram([FromBody] UpdateInstagramHandlerCommand command)
             => Send(command);
 
-        /// <summary>
-        /// Assigns or changes the Venue for a Host.
-        /// </summary>
         [HttpPut("venue")]
-        public Task<ActionResult<UpdateHostVenueOutputModel>> UpdateVenue(UpdateHostVenueCommand command)
+        public Task<ActionResult<UpdateHostVenueOutputModel>> UpdateVenue([FromBody] UpdateHostVenueCommand command)
             => Send(command);
 
         //

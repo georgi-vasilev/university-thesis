@@ -6,27 +6,18 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
+    [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ApiController
     {
-        /// <summary>
-        /// Create a new order (in state New).
-        /// </summary>
         [HttpPost]
-        public Task<ActionResult<CreateOrderOutputModel>> Create(CreateOrderCommand command) => Send(command);
+        public Task<ActionResult<CreateOrderOutputModel>> Create([FromBody] CreateOrderCommand command) => Send(command);
 
-        /// <summary>
-        /// Mark an existing order as Completed.
-        /// </summary>
         [HttpPut("complete")]
-        public Task<ActionResult<OrderCompleteOutputModel>> Complete(OrderCompleteCommand command) => Send(command);
+        public Task<ActionResult<OrderCompleteOutputModel>> Complete([FromBody] OrderCompleteCommand command) => Send(command);
 
-        /// <summary>
-        /// Purchase tickets for an event:  
-        /// Charges payment, creates an order, adds the ticket(s), and completes the order.
-        /// </summary>
         [HttpPost("purchase")]
-        public Task<ActionResult> Purchase(OrderPurchaseCommand command) => Send(command);
+        public Task<ActionResult> Purchase([FromBody] OrderPurchaseCommand command) => Send(command);
 
         //
         // TODO: once your queries are ready, you might add:

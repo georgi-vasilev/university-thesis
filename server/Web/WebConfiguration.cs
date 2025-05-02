@@ -17,8 +17,10 @@
             services
                 .AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters()
+                .AddEndpointsApiExplorer()
                 .AddValidatorsFromAssemblyContaining<CancelEventCommand>()
-                .AddControllers(options => {
+                .AddControllers(options =>
+                {
                     options.Filters.Add<ErrorOrProblemDetailsFilter>();
                 })
                 .AddNewtonsoftJson();

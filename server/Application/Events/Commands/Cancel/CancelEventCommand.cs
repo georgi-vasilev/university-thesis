@@ -6,8 +6,8 @@
 
     public record CancelEventCommand : IRequest<ErrorOr<Success>>
     {
-        public Guid HostId { get; set; }
-        public Guid EventId { get; set; }
-        public EventStatus Status { get; set; }
+        public Guid HostId { get; init; }
+        public Guid EventId { get; init; }
+        public EventStatus Status { get; init; }
     }
 }

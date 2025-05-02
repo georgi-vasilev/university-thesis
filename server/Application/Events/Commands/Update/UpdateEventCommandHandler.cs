@@ -1,5 +1,6 @@
 ﻿namespace Application.Events.Commands.Update
 {
+    using Domain.Event;
     using Domain.Event.Error;
     using Domain.Event.Repository;
     using Domain.Venue.Error;
@@ -29,6 +30,14 @@
             CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling UpdateEventCommand for Event {EventId}", request.EventId);
+            var timeResult = TimeRange.FromDateTimes(request.StartTime, request.EndTime);
+
+            if (timeResult.IsError)
+            {
+                return timeResult.FirstError;
+            }
+
+            var time = timeResult.Value;
 
             var eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId, cancellationToken);
             if(eventToUpdate is null)
@@ -49,7 +58,7 @@
                 predicate: @event => @event.VenueId == request.VenueId && @event.Date == request.Date,
                 cancellationToken);
 
-            if (eventsAtVenue.Any(e => e.Time.OverlapsWith(request.Time)))
+            if (eventsAtVenue.Any(e => e.Time.OverlapsWith(time)))
             {
                 _logger.LogWarning("Scheduling conflict detected for Venue {VenueId} on {Date}.", request.VenueId, request.Date);
                 return EventErrors.OverlappingEventError;
@@ -60,7 +69,7 @@
                 request.Name,
                 request.Description,
                 request.Date,
-                request.Time,
+                time,
                 newVenue.Id);
 
 
