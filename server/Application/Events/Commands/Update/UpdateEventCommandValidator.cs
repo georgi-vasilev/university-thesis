@@ -26,9 +26,17 @@
                 .GreaterThan(e => DateOnly.FromDateTime(DateTime.UtcNow.Date))
                     .WithMessage("Date must be in the future. Cannot enter past date");
 
-            this.RuleFor(e => e.Time)
+            this.RuleFor(e => e.StartTime)
                 .NotNull()
-                    .WithMessage("Time must be provided.");
+                    .WithMessage("Start time must be provided.")
+                .LessThan(e => e.EndTime)
+                    .WithMessage("End time cannot be before start time");
+
+            this.RuleFor(e => e.EndTime)
+                .NotNull()
+                    .WithMessage("End time must be provided.")
+                .GreaterThan(e => e.StartTime)
+                    .WithMessage("End time cannot be before start time");
 
             this.RuleFor(e => e.VenueId)
                 .NotEmpty()

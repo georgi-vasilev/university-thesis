@@ -13,7 +13,7 @@
         public Task<ActionResult<CreateEventOutputModel>> Create([FromBody] CreateEventCommand command) => Send(command);
 
         [HttpPut("{id:guid}")]
-        public Task<ActionResult<UpdateCommandOutputModel>> Update(UpdateEventCommand command) => Send(command);
+        public Task<ActionResult<UpdateCommandOutputModel>> Update([FromBody] UpdateEventCommand command) => Send(command);
 
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> Cancel([FromBody] CancelEventCommand command) => Send(command);
