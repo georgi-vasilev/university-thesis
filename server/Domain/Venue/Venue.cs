@@ -20,9 +20,9 @@
 
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
-        internal Venue(Guid id, string name, Address address, int capacity, VenueType type)
+        internal Venue(Guid? id, string name, Address address, int capacity, VenueType type)
         {
-            Id = id;
+            Id = id ?? Guid.NewGuid();
             Name = name;
             Address = address;
             Capacity = capacity;

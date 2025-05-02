@@ -17,7 +17,6 @@ namespace Startup
                 .AddApplication(builder.Configuration)
                 .AddInfrastructure(builder.Configuration)
                 .AddWebComponents()
-                .AddEndpointsApiExplorer()
                 .AddSwaggerGen();
 
             var app = builder.Build();
