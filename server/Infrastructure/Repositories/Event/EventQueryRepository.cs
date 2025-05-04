@@ -2,6 +2,7 @@
 {
     using Application.Common.Contracts;
     using Application.Events.Queries.GetEventDetails;
+    using Application.Events.Queries.GetEvents;
     using Domain.Event.Error;
     using ErrorOr;
     using Infrastructure.Persistence;
@@ -30,13 +31,61 @@
                 h.ContactInfo.FullName,
                 e.Date,
                 e.Time,
-                e.Status,
+                e.Status.ToString(),
                 v.Capacity - e.TicketCount
                 )).FirstOrDefaultAsync(cancelletionToken);
 
             if (eventDetails is null)
             {
                 return EventErrors.NotFoundError;
+            }
+
+            return eventDetails;
+        }
+
+        public async Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByHostAsync(Guid hostId, CancellationToken cancelletionToken)
+        {
+            var eventDetails = await(
+                from e in _context.Events.AsNoTracking()
+                join h in _context.Hosts.AsNoTracking()
+                    on e.HostId equals h.Id
+                where e.HostId == hostId
+                select new GetEventsOutputModel(
+                e.Id,
+                e.Name,
+                e.Description,
+                e.Date,
+                e.Time,
+                e.Status.ToString()
+                )).ToListAsync(cancelletionToken);
+
+            if (eventDetails.Count == 0)
+            {
+                return EventErrors.GetEventsByHostNotFoundError;
+            }
+
+            return eventDetails;
+        }
+
+        public async Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByVenueAsync(Guid venueId, CancellationToken cancelletionToken)
+        {
+            var eventDetails = await(
+              from e in _context.Events.AsNoTracking()
+              join h in _context.Hosts.AsNoTracking()
+                  on e.HostId equals h.Id
+              where e.VenueId == venueId
+              select new GetEventsOutputModel(
+              e.Id,
+              e.Name,
+              e.Description,
+              e.Date,
+              e.Time,
+              e.Status.ToString()
+              )).ToListAsync(cancelletionToken);
+
+            if (eventDetails.Count == 0)
+            {
+                return EventErrors.GetEventsByVenueNotFoundError;
             }
 
             return eventDetails;

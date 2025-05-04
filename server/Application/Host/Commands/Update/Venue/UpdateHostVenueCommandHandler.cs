@@ -59,7 +59,7 @@
                 return HostErrors.UnexpectedError;
             }
 
-            return new UpdateHostVenueOutputModel(host.Id, host.VenueId);
+            return new UpdateHostVenueOutputModel(host.Id, host.VenueId!.Value);
         }
     }
 }

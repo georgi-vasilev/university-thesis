@@ -6,7 +6,7 @@
     internal class HostBuilder : IHostBuilder
     {
         private ContactInfo _contactInfo = default!;
-        private Guid _venueId = default!;
+        private Guid? _venueId = null;
         private Guid? _id;
 
         public IHostBuilder WithContactInfo(ContactInfo contactInfo)

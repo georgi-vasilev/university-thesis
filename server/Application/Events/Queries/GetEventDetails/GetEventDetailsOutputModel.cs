@@ -12,7 +12,7 @@
             string host,
             DateOnly date,
             TimeRange time,
-            EventStatus status,
+            string status,
             int availableTickets)
         {
             Id = id;
@@ -32,7 +32,7 @@
         public string Host { get; set; } = default!;
         public DateOnly Date { get; init; }
         public TimeRange Time { get; init; } = default!;
-        public EventStatus Status { get; set; }
+        public string Status { get; set; }
         public int AvailableTickets { get; set; }
     }
 }

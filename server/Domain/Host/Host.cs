@@ -12,7 +12,7 @@
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public ContactInfo ContactInfo { get; private set; }
-        public Guid VenueId { get; private set; }
+        public Guid? VenueId { get; private set; }
         public IReadOnlyCollection<Guid> OrganizedEventIds => _organizedEventIds;
 
         private Host()
@@ -27,7 +27,7 @@
         {
             Id = id ?? Guid.NewGuid();
             ContactInfo = contactInfo;
-            VenueId = venueId ?? Guid.Empty;
+            VenueId = venueId;
         }
 
 

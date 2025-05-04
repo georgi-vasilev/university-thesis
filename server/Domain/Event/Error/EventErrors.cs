@@ -65,6 +65,14 @@
             code: "Event.GetEventDetailsQuery",
             description: "Event not found");
 
+        public static readonly Error GetEventsByHostNotFoundError = Error.NotFound(
+            code: "Event.GetEventsByHost",
+            description: "No events found for this host");
+
+        public static readonly Error GetEventsByVenueNotFoundError = Error.NotFound(
+            code: "Event.GetEventsByVenue",
+            description: "No events found for this venue");
+
         public static readonly Error EventDoesNotBelongToHostError = Error.Validation(
             code: "Event.InvalidHost",
             description: "The provided host does not match the event's host.");
@@ -89,8 +97,12 @@
             code: "Event.CreateEventCommand",
             description: "Unexpected error occurred");
 
-        public static readonly Error NoEventsFound = Error.NotFound(
+        public static readonly Error NoEventsFoundError = Error.NotFound(
            code: "Event.GetEventsQuery",
-           description: "No events were found");
+           description: "No events were found.");
+
+        public static readonly Error NoEventsFoundWithProvidedSearchTermError = Error.NotFound(
+            code: "Event.SearchEventsQuery",
+        description: "No events were found with the provided search term.");
     }
 }

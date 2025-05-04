@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250504113711_AddMissingRelations")]
+    partial class AddMissingRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("VenueId")
+                    b.Property<Guid>("VenueId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -93,8 +96,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -404,7 +405,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Venue.Venue", null)
                         .WithMany()
                         .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.OwnsOne("Domain.Host.ContactInfo", "ContactInfo", b1 =>
                         {
@@ -458,12 +460,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Order.Order", b =>
                 {
-                    b.HasOne("Domain.Event.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.OwnsOne("Domain.Order.PaymentDetails", "Payment", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
