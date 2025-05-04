@@ -1,5 +1,7 @@
 ﻿namespace Infrastructure.Persistence.Configurations
 {
+    using Domain.Buyer;
+    using Domain.Event;
     using Domain.Order;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +20,15 @@
                    .IsRequired()
                    .HasConversion<string>();
 
+            builder.HasOne<Event>()
+                .WithMany()
+                .HasForeignKey(o => o.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<Buyer>()
+                .WithMany()
+                .HasForeignKey(o => o.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.OwnsOne(o => o.Payment, pd =>
             {
                 pd.Property(p => p.TransactionId)
@@ -30,6 +41,11 @@
                 pd.Property(p => p.Status)
                   .HasColumnName("PaymentStatus")
                   .HasConversion<string>();
+
+                pd.HasIndex(p => p.TransactionId)
+                  .IsUnique()
+                  .HasFilter("[TransactionId] IS NOT NULL")
+                  .HasDatabaseName("UX_Orders_TransactionId");
             });
 
             builder.HasMany(o => o.Tickets)

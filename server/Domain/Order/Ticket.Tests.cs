@@ -84,7 +84,7 @@
         }
 
         [Fact]
-        public void MarkAsSold_Should_Update_Ticket_Status_And_Set_AttendeeId()
+        public void AddToBuyer_Should_Update_Ticket_Status_And_Set_AttendeeId()
         {
             var eventId = Guid.NewGuid();
             var price = new Money(100, "USD");
@@ -98,7 +98,7 @@
             var ticket = buildResult.Value;
             var attendeeId = Guid.NewGuid();
 
-            var result = ticket.MarkAsSold(attendeeId);
+            var result = ticket.AddToBuyer(attendeeId);
 
             result.IsError.Should().BeFalse();
             ticket.Status.Should().Be(TicketStatus.Sold);
@@ -106,7 +106,7 @@
         }
 
         [Fact]
-        public void MarkAsSold_Should_Return_Error_If_Ticket_Already_Sold()
+        public void AddToBuyer_Should_Return_Error_If_Ticket_Already_Sold()
         {
             var eventId = Guid.NewGuid();
             var price = new Money(75, "USD");
@@ -119,13 +119,13 @@
             buildResult.IsError.Should().BeFalse();
             var ticket = buildResult.Value;
             var firstAttendeeId = Guid.NewGuid();
-            var markAsSoldResult = ticket.MarkAsSold(firstAttendeeId);
-            markAsSoldResult.IsError.Should().BeFalse();
-            markAsSoldResult.Value.Should().Be(Result.Success);
+            var AddToBuyerResult = ticket.AddToBuyer(firstAttendeeId);
+            AddToBuyerResult.IsError.Should().BeFalse();
+            AddToBuyerResult.Value.Should().Be(Result.Success);
 
             var secondAttendeeId = Guid.NewGuid();
 
-            var result = ticket.MarkAsSold(secondAttendeeId);
+            var result = ticket.AddToBuyer(secondAttendeeId);
 
             result.IsError.Should().BeTrue();
             result.FirstError.Should().Be(TicketError.AlreadySoldError);

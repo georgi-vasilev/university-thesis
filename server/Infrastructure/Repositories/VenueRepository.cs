@@ -4,6 +4,9 @@
     using Domain.Venue.Repository;
     using Microsoft.EntityFrameworkCore;
     using Persistence;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     internal class VenueRepository : IVenueDomainRepository
     {
@@ -14,30 +17,35 @@
 
         public async Task AddAsync(Venue aggregate, CancellationToken cancellationToken)
         {
-            _context.Venue.Add(aggregate);
+            _context.Venues.Add(aggregate);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var entity = await _context.Venue.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var entity = await _context.Venues.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (entity is not null)
             {
-                _context.Venue.Remove(entity);
+                _context.Venues.Remove(entity);
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
 
+        public async Task<IEnumerable<Venue>> GetAllAsync(CancellationToken cancellationToken) 
+            => await _context.Venues
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
         public async Task<Venue?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Venue
+            return await _context.Venues
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
         public async Task UpdateAsync(Venue aggregate, CancellationToken cancellationToken)
         {
-            _context.Venue.Update(aggregate);
+            _context.Venues.Update(aggregate);
             await _context.SaveChangesAsync(cancellationToken);
         }
     }

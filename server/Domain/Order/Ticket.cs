@@ -30,7 +30,7 @@
             Id = id ?? Guid.NewGuid();
         }
 
-        public ErrorOr<Success> MarkAsSold(Guid attendeeId)
+        public ErrorOr<Success> AddToBuyer(Guid attendeeId)
         {
             if (Status == TicketStatus.Sold)
             {

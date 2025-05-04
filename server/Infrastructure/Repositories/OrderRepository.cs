@@ -9,7 +9,7 @@
     {
         private readonly IApplicationDbContext _context;
 
-        public OrderRepository(IApplicationDbContext context) 
+        public OrderRepository(IApplicationDbContext context)
             => _context = context;
 
         public async Task AddAsync(Order aggregate, CancellationToken cancellationToken)
@@ -57,6 +57,13 @@
                 .Where(o => o.Tickets.Any(t => t.EventId == eventId))
                 .ToList();
         }
+
+        public Task<Order?> GetByTransactionIdAsync(string transactionId, Guid buyerId, CancellationToken ct = default)
+            => _context.Orders
+            .AsNoTracking()
+            .Include(o => o.Tickets)
+            .Where(o => o.Payment!.TransactionId == transactionId && o.BuyerId == buyerId)
+            .FirstOrDefaultAsync(ct);
 
         public async Task UpdateAsync(Order aggregate, CancellationToken cancellationToken)
         {

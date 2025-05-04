@@ -47,7 +47,6 @@
 
             await _eventRepository.UpdateAsync(@event, cancellationToken);
 
-            //TODO: dispatch event
             return Result.Success;
         }
 
@@ -58,17 +57,16 @@
                 return EventErrors.EventDoesNotBelongToHostError;
             }
 
-            await _eventRepository.AddAsync(@event, cancellationToken);
-
             var addResult = host.AddOrganizedEvent(@event.Id);
             if (addResult.IsError)
             {
                 return addResult.FirstError;
             }
 
+            await _eventRepository.AddAsync(@event, cancellationToken);
+
             await _hostRepository.UpdateAsync(host, cancellationToken);
 
-            // TODO: dispatch event
             return Result.Success;
         }
 

@@ -1,7 +1,6 @@
 ﻿namespace Domain.Event.Error
 {
     using ErrorOr;
-    using System.Data;
 
     public static class EventErrors
     {
@@ -61,6 +60,18 @@
             code: "Event.Update",
             description: "Event not found");
 
+        public static readonly Error NotFoundError = Error.NotFound(
+            code: "Event.GetEventDetailsQuery",
+            description: "Event not found");
+
+        public static readonly Error GetEventsByHostNotFoundError = Error.NotFound(
+            code: "Event.GetEventsByHost",
+            description: "No events found for this host");
+
+        public static readonly Error GetEventsByVenueNotFoundError = Error.NotFound(
+            code: "Event.GetEventsByVenue",
+            description: "No events found for this venue");
+
         public static readonly Error EventDoesNotBelongToHostError = Error.Validation(
             code: "Event.InvalidHost",
             description: "The provided host does not match the event's host.");
@@ -73,7 +84,7 @@
             code: "Event.TicketSale",
             description: "Event has ended or was cancelled.");
 
-        public static readonly Error CannotDeleteEventWithOrders = Error.Validation(
+        public static readonly Error CannotDeleteEventWithOrders = Error.Forbidden(
             code: "Event.Cancellation",
             description: "Cannot cancell event with sold tickets.");
 
@@ -81,8 +92,24 @@
             code: "Event.Overlapping",
             description: "Event overlaps with a different one.");
 
-        public static readonly Error UnexpectedError = Error.Validation(
+        public static readonly Error UnexpectedError = Error.Conflict(
             code: "Event.CreateEventCommand",
             description: "Unexpected error occurred");
+
+        public static readonly Error NoEventsFoundError = Error.NotFound(
+           code: "Event.GetEventsQuery",
+           description: "No events were found.");
+
+        public static readonly Error NoEventsFoundWithProvidedSearchTermError = Error.NotFound(
+            code: "Event.SearchEventsQuery",
+            description: "No events were found with the provided search term.");
+
+        public static readonly Error NoEventsFoundInTheGivenTimeRangeError = Error.NotFound(
+            code: "Event.GetEventsInDateRangeQuery",
+            description: "No events were found in the given time range.");
+
+        public static readonly Error Unauthorized = Error.Unauthorized(
+            code: "Unauthorized access",
+            description: "You are not allowed to perform this action");
     }
 }

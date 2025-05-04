@@ -22,6 +22,35 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Buyer.Buyer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Buyers", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Event.Event", b =>
                 {
                     b.Property<Guid>("Id")
@@ -39,6 +68,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("HostId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -48,10 +81,17 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TicketCount")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("VenueId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HostId");
+
+                    b.HasIndex("VenueId");
 
                     b.ToTable("Events", (string)null);
                 });
@@ -62,10 +102,17 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("VenueId")
+                    b.Property<Guid?>("VenueId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("_organizedEventIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("OrganizedEventIds");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VenueId");
 
                     b.ToTable("Hosts", (string)null);
                 });
@@ -87,6 +134,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -119,6 +170,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventId");
+
                     b.HasIndex("OrderId");
 
                     b.ToTable("Tickets", (string)null);
@@ -147,13 +200,16 @@ namespace Infrastructure.Migrations
                     b.ToTable("Venues", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Authentication.User", b =>
+            modelBuilder.Entity("Infrastructure.Authentication.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("BuyerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -204,7 +260,13 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("BuyerId")
+                        .IsUnique()
+                        .HasFilter("[BuyerId] IS NOT NULL");
+
+                    b.HasIndex("HostId")
+                        .IsUnique()
+                        .HasFilter("[HostId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -352,6 +414,64 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Event.Event", b =>
                 {
+                    b.HasOne("Domain.Host.Host", null)
+                        .WithMany()
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Venue.Venue", null)
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Common.ValueObject.Money", "GeneralPrice", b1 =>
+                        {
+                            b1.Property<Guid>("EventId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("GeneralPriceAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("GeneralPriceCurrency");
+
+                            b1.HasKey("EventId");
+
+                            b1.ToTable("Events");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EventId");
+                        });
+
+                    b.OwnsOne("Domain.Common.ValueObject.Money", "VipPrice", b1 =>
+                        {
+                            b1.Property<Guid>("EventId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("VipPriceAmount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)")
+                                .HasColumnName("VipPriceCurrency");
+
+                            b1.HasKey("EventId");
+
+                            b1.ToTable("Events");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EventId");
+                        });
+
                     b.OwnsOne("Domain.Event.TimeRange", "Time", b1 =>
                         {
                             b1.Property<Guid>("EventId")
@@ -373,12 +493,22 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("EventId");
                         });
 
+                    b.Navigation("GeneralPrice")
+                        .IsRequired();
+
                     b.Navigation("Time")
                         .IsRequired();
+
+                    b.Navigation("VipPrice");
                 });
 
             modelBuilder.Entity("Domain.Host.Host", b =>
                 {
+                    b.HasOne("Domain.Venue.Venue", null)
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.OwnsOne("Domain.Host.ContactInfo", "ContactInfo", b1 =>
                         {
                             b1.Property<Guid>("HostId")
@@ -431,6 +561,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Order.Order", b =>
                 {
+                    b.HasOne("Domain.Buyer.Buyer", null)
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Event.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("Domain.Order.PaymentDetails", "Payment", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -453,6 +595,11 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrderId");
 
+                            b1.HasIndex("TransactionId")
+                                .IsUnique()
+                                .HasDatabaseName("UX_Orders_TransactionId")
+                                .HasFilter("[TransactionId] IS NOT NULL");
+
                             b1.ToTable("Orders");
 
                             b1.WithOwner()
@@ -464,6 +611,12 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Order.Ticket", b =>
                 {
+                    b.HasOne("Domain.Event.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Order.Order", null)
                         .WithMany("Tickets")
                         .HasForeignKey("OrderId")
@@ -546,11 +699,19 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Infrastructure.Authentication.User", b =>
+            modelBuilder.Entity("Infrastructure.Authentication.ApplicationUser", b =>
                 {
+                    b.HasOne("Domain.Buyer.Buyer", "Buyer")
+                        .WithOne()
+                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Host.Host", "Host")
-                        .WithMany()
-                        .HasForeignKey("HostId");
+                        .WithOne()
+                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "HostId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Buyer");
 
                     b.Navigation("Host");
                 });
@@ -566,7 +727,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Infrastructure.Authentication.User", null)
+                    b.HasOne("Infrastructure.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -575,7 +736,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Infrastructure.Authentication.User", null)
+                    b.HasOne("Infrastructure.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -590,7 +751,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Authentication.User", null)
+                    b.HasOne("Infrastructure.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -599,7 +760,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Infrastructure.Authentication.User", null)
+                    b.HasOne("Infrastructure.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -6,7 +6,6 @@
     using ErrorOr;
     using MediatR;
     using Microsoft.Extensions.Logging;
-    using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
     public class CreateHostCommandHandler : IRequestHandler<CreateHostCommand, ErrorOr<CreateHostOutputModel>>
     {

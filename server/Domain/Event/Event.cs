@@ -1,6 +1,7 @@
 ﻿namespace Domain.Event
 {
     using Common;
+    using Common.ValueObject;
     using Error;
     using ErrorOr;
 
@@ -13,14 +14,21 @@
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
+        public string ImageUrl { get; private set; }
         public Guid HostId { get; private set; }
         public DateOnly Date { get; private set; }
         public TimeRange Time { get; private set; }
         public Guid VenueId { get; private set; }
         public EventStatus Status { get; private set; }
+        public Money GeneralPrice { get; private set; }
+        public Money? VipPrice { get; private set; }
         public int TicketCount
         {
             get => this._ticketIds.Count;
+            set
+            {
+                value = this._ticketIds.Count;
+            }
         }
 
         private Event() { }
@@ -28,18 +36,24 @@
         internal Event(
             string name,
             string description,
+            string imageUrl,
             DateOnly date,
             TimeRange time,
             Guid venueId,
             Guid hostId,
+            decimal generalTicketPrice,
+            decimal? vipTicketPrice,
             Guid? id = null)
         {
             Name = name;
             Description = description;
+            ImageUrl = imageUrl;
             Date = date;
             Time = time;
             VenueId = venueId;
             HostId = hostId;
+            GeneralPrice = new Money(generalTicketPrice, "USD");
+            VipPrice = vipTicketPrice.HasValue ? new Money(vipTicketPrice.Value, "USD") : null;
             Id = id ?? Guid.NewGuid();
             Status = EventStatus.Active;
         }
@@ -142,7 +156,7 @@
             return this;
         }
 
-        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-        private void ClearDomainEvents() => _domainEvents.Clear();
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void ClearDomainEvents() => _domainEvents.Clear();
     }
 }

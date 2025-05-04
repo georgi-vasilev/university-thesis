@@ -21,9 +21,10 @@
         {
             
         }
-        internal Order(Guid buyerId, Guid? id = null)
+        internal Order(Guid buyerId, Guid eventId, Guid? id = null)
         {
             BuyerId = buyerId;
+            EventId = eventId;
             Status = OrderStatus.New;
             Id = id ?? Guid.NewGuid();
         }
@@ -91,6 +92,9 @@
 
             Status = OrderStatus.Completed;
 
+            this.UpdatePaymentDetails(
+                new PaymentDetails(this.Payment.Amount, this.Payment.PaymentMethod, PaymentStatus.Completed, this.Payment.TransactionId));
+
             //TODO: dispatch event
             return Result.Success;
         }
@@ -103,7 +107,7 @@
                 return OrderError.TicketNotFoundError;
             }
 
-            var result = ticket.MarkAsSold(attendeeId);
+            var result = ticket.AddToBuyer(attendeeId);
             if (result.IsError)
             {
                 return result.FirstError;
@@ -168,8 +172,8 @@
             return Result.Success;
         }
 
-        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-        private void ClearDomainEvents() => _domainEvents.Clear();
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void ClearDomainEvents() => _domainEvents.Clear();
 
     }
 }
