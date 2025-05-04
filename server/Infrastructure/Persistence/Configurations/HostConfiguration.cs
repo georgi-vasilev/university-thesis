@@ -1,6 +1,7 @@
 ﻿namespace Infrastructure.Persistence.Configurations
 {
     using Domain.Host;
+    using Domain.Venue;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +13,13 @@
             builder.HasKey(h => h.Id);
 
             builder.Property(h => h.VenueId)
-                   .IsRequired();
+                .IsRequired(false);
+
+            builder.HasOne<Venue>()
+                .WithMany()
+                .HasForeignKey(h => h.VenueId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.OwnsOne(h => h.ContactInfo, ci =>
             {

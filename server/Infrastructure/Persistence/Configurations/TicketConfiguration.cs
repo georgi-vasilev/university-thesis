@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Persistence.Configurations
 {
+    using Domain.Event;
     using Domain.Order;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -13,6 +14,16 @@
 
             builder.Property(t => t.EventId)
                    .IsRequired();
+
+            builder.HasOne<Event>()
+                .WithMany()
+                .HasForeignKey(t => t.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne<Order>()
+                .WithMany(o => o.Tickets)
+                .HasForeignKey("OrderId")
+                .IsRequired();
 
             builder.OwnsOne(t => t.Price, m =>
             {

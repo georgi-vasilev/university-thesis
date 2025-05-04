@@ -29,12 +29,12 @@
                     e.Description,
                     e.Date,
                     e.Time,
-                    e.Status))
+                    e.Status.ToString()))
                 .ToList();
 
-            if (result is null)
+            if (result.Count == 0)
             {
-                return EventErrors.NoEventsFound;
+                return EventErrors.NoEventsFoundError;
             }
 
             return result;

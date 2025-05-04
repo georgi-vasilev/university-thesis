@@ -1,7 +1,7 @@
-﻿using Domain.Event;
-
-namespace Application.Events.Queries.GetEvents
+﻿namespace Application.Events.Queries.GetEvents
 {
+    using Domain.Event;
+
     public record GetEventsOutputModel
     {
         public GetEventsOutputModel(
@@ -10,7 +10,7 @@ namespace Application.Events.Queries.GetEvents
             string description,
             DateOnly date,
             TimeRange time,
-            EventStatus status)
+            string status)
         {
             Id = id;
             Name = name;
@@ -26,6 +26,6 @@ namespace Application.Events.Queries.GetEvents
         public string Description { get; init; } = default!;
         public DateOnly Date { get; init; }
         public TimeRange Time { get; init; } = default!;
-        public EventStatus Status { get; init; }
+        public string Status { get; init; }
     }
 }

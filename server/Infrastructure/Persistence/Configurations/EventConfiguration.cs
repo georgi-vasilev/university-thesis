@@ -1,6 +1,8 @@
 ﻿namespace Infrastructure.Persistence.Configurations
 {
     using Domain.Event;
+    using Domain.Host;
+    using Domain.Venue;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,6 +32,16 @@
 
             builder.Property(e => e.HostId)
                    .IsRequired();
+
+            builder.HasOne<Host>()
+                   .WithMany()
+                   .HasForeignKey(e => e.HostId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<Venue>()
+                   .WithMany()
+                   .HasForeignKey(e => e.VenueId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.OwnsOne(e => e.Time, tr =>
             {
