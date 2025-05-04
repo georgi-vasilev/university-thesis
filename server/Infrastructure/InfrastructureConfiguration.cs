@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure
 {
+    using Application.Common.Contracts;
     using Application.Services.Contracts.Payment;
     using Domain.Event.Repository;
     using Domain.Host.Repository;
@@ -11,6 +12,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Repositories;
+    using Repositories.Event;
 
     //TODO: check how to configure auth
     public static class InfrastructureConfiguration
@@ -41,7 +43,8 @@
                 .AddScoped<IEventDomainRepository, EventRepository>()
                 .AddScoped<IHostDomainRepository, HostRepository>()
                 .AddScoped<IOrderDomainRepository, OrderRepository>()
-                .AddScoped<IVenueDomainRepository, VenueRepository>();
+                .AddScoped<IVenueDomainRepository, VenueRepository>()
+                .AddScoped<IEventQueryRepository, EventQueryRepository>();
 
         //private static IServiceCollection AddAuth(
         //    this IServiceCollection services,

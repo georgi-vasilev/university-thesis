@@ -1,7 +1,13 @@
-﻿namespace Infrastructure.Repositories
+﻿namespace Infrastructure.Repositories.Event
 {
+    using Application.Common.Contracts;
+    using Application.Events.Queries.GetEventDetails;
+    using Application.Events.Queries.GetEvents;
+    using Azure.Core;
     using Domain.Event;
+    using Domain.Event.Error;
     using Domain.Event.Repository;
+    using ErrorOr;
     using Microsoft.EntityFrameworkCore;
     using Persistence;
 
@@ -9,7 +15,7 @@
     {
         private readonly IApplicationDbContext _context;
 
-        public EventRepository(IApplicationDbContext context) 
+        public EventRepository(IApplicationDbContext context)
             => _context = context;
 
         public async Task AddAsync(Event aggregate, CancellationToken cancellationToken)

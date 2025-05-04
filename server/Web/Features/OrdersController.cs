@@ -18,20 +18,5 @@
 
         [HttpPost("purchase")]
         public Task<ActionResult> Purchase([FromBody] OrderPurchaseCommand command) => Send(command);
-
-        //
-        // TODO: once your queries are ready, you might add:
-        //
-        // [HttpGet]
-        // public Task<ActionResult<List<OrderDto>>> List([FromQuery] GetOrdersByBuyerQuery q)
-        //     => Send(q);
-        //
-        // [HttpGet("{id:guid}")]
-        // public Task<ActionResult<OrderDto>> Details(Guid id)
-        // {
-        //     var q = new GetOrderDetailsQuery { OrderId = id };
-        //     return Send(q);
-        // }
-        //
     }
 }

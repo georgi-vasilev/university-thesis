@@ -61,6 +61,10 @@
             code: "Event.Update",
             description: "Event not found");
 
+        public static readonly Error NotFoundError = Error.NotFound(
+            code: "Event.GetEventDetailsQuery",
+            description: "Event not found");
+
         public static readonly Error EventDoesNotBelongToHostError = Error.Validation(
             code: "Event.InvalidHost",
             description: "The provided host does not match the event's host.");
@@ -73,7 +77,7 @@
             code: "Event.TicketSale",
             description: "Event has ended or was cancelled.");
 
-        public static readonly Error CannotDeleteEventWithOrders = Error.Validation(
+        public static readonly Error CannotDeleteEventWithOrders = Error.Forbidden(
             code: "Event.Cancellation",
             description: "Cannot cancell event with sold tickets.");
 
@@ -81,8 +85,12 @@
             code: "Event.Overlapping",
             description: "Event overlaps with a different one.");
 
-        public static readonly Error UnexpectedError = Error.Validation(
+        public static readonly Error UnexpectedError = Error.Conflict(
             code: "Event.CreateEventCommand",
             description: "Unexpected error occurred");
+
+        public static readonly Error NoEventsFound = Error.NotFound(
+           code: "Event.GetEventsQuery",
+           description: "No events were found");
     }
 }

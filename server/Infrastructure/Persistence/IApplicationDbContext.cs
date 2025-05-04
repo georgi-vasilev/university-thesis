@@ -11,7 +11,7 @@
         DbSet<Event> Events { get; }
         DbSet<Host> Hosts { get; }
         DbSet<Order> Orders { get; }
-        DbSet<Venue> Venue { get; }
+        DbSet<Venue> Venues { get; }
         Task<int> SaveChangesAsync(CancellationToken ct = default);
     }
 }

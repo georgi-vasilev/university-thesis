@@ -12,6 +12,10 @@
     [Route("api/[controller]")]
     public class HostsController : ApiController
     {
+        // [HttpGet("{id:guid}")]
+        // public Task<ActionResult<HostDto>> Details([FromRoute] GetHostDetailsQuery q)
+        //     => Send(q);
+        //
 
         [HttpPost]
         public Task<ActionResult<CreateHostOutputModel>> Create([FromBody] CreateHostCommand command)
@@ -35,16 +39,5 @@
         public Task<ActionResult<UpdateHostVenueOutputModel>> UpdateVenue([FromBody] UpdateHostVenueCommand command)
             => Send(command);
 
-        //
-        // TODO: once you have queries:
-        //
-        // [HttpGet]
-        // public Task<ActionResult<List<HostDto>>> List([FromQuery] GetHostsQuery q)
-        //     => Send(q);
-        //
-        // [HttpGet("{id:guid}")]
-        // public Task<ActionResult<HostDto>> Details([FromRoute] GetHostDetailsQuery q)
-        //     => Send(q);
-        //
     }
 }

@@ -19,7 +19,7 @@
         public DbSet<Host> Hosts { get; set; } = default!;
         public DbSet<Order> Orders { get; set; } = default!;
         public DbSet<Ticket> Tickets { get; set; } = default!;
-        public DbSet<Venue> Venue { get; set; } = default!;
+        public DbSet<Venue> Venues { get; set; } = default!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
