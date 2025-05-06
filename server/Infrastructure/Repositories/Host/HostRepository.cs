@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Repositories
+﻿namespace Infrastructure.Repositories.Host
 {
     using Domain.Host;
     using Domain.Host.Repository;
