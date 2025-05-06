@@ -6,13 +6,14 @@
     using Domain.Host.Repository;
     using Domain.Order.Repository;
     using Domain.Venue.Repository;
-    using Infrastructure.Persistence;
-    using Infrastructure.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Persistence;
     using Repositories;
     using Repositories.Event;
+    using Repositories.Host;
+    using Services;
 
     //TODO: check how to configure auth
     public static class InfrastructureConfiguration
@@ -44,7 +45,8 @@
                 .AddScoped<IHostDomainRepository, HostRepository>()
                 .AddScoped<IOrderDomainRepository, OrderRepository>()
                 .AddScoped<IVenueDomainRepository, VenueRepository>()
-                .AddScoped<IEventQueryRepository, EventQueryRepository>();
+                .AddScoped<IEventQueryRepository, EventQueryRepository>()
+                .AddScoped<IHostQueryRepository, HostQueryRepository>();
 
         //private static IServiceCollection AddAuth(
         //    this IServiceCollection services,

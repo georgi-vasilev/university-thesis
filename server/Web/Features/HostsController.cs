@@ -5,6 +5,7 @@
     using Application.Host.Commands.Update.InstagramHandler;
     using Application.Host.Commands.Update.PhoneNumber;
     using Application.Host.Commands.Update.Venue;
+    using Application.Host.Queries;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
@@ -12,10 +13,8 @@
     [Route("api/[controller]")]
     public class HostsController : ApiController
     {
-        // [HttpGet("{id:guid}")]
-        // public Task<ActionResult<HostDto>> Details([FromRoute] GetHostDetailsQuery q)
-        //     => Send(q);
-        //
+        [HttpGet("details/{Id:guid}", Name = nameof(GetHostDetailsQuery))]
+        public Task<ActionResult<GetHostDetailsOutputModel>> Details([FromRoute] GetHostDetailsQuery query) => Send(query);
 
         [HttpPost]
         public Task<ActionResult<CreateHostOutputModel>> Create([FromBody] CreateHostCommand command)

@@ -9,7 +9,7 @@
             string name,
             string description,
             string venue,
-            string host,
+            string hostInstagramHandler,
             DateOnly date,
             TimeRange time,
             string status,
@@ -19,7 +19,7 @@
             Name = name;
             Description = description;
             Venue = venue;
-            Host = host;
+            HostInstagramHandler = hostInstagramHandler;
             Date = date;
             Time = time;
             Status = status;
@@ -29,7 +29,7 @@
         public string Name { get; init; } = default!;
         public string Description { get; init; } = default!;
         public string Venue { get; set; } = default!;
-        public string Host { get; set; } = default!;
+        public string HostInstagramHandler { get; set; } = default!;
         public DateOnly Date { get; init; }
         public TimeRange Time { get; init; } = default!;
         public string Status { get; set; }

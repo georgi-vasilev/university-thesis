@@ -28,7 +28,7 @@
                 e.Name,
                 e.Description,
                 v.Name,
-                h.ContactInfo.FullName,
+                h.ContactInfo.InstagramHandler,
                 e.Date,
                 e.Time,
                 e.Status.ToString(),
@@ -58,6 +58,11 @@
                 e.Time,
                 e.Status.ToString()
                 )).ToListAsync(cancelletionToken);
+
+            if(eventDetails is null)
+            {
+                return EventErrors.GetEventsByHostNotFoundError;
+            }
 
             if (eventDetails.Count == 0)
             {
