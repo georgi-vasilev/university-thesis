@@ -98,6 +98,18 @@
                 return EventErrors.EventDoesNotBelongToHostError;
             }
 
+            var venue = await _venueRepository.GetByIdAsync(newVenueId, cancellationToken);
+
+            if(venue is null)
+            {
+                return VenueErrors.VenueNotFoundError;
+            }
+            
+            if(@event.TicketCount > venue.Capacity)
+            {
+                return EventErrors.CapacityExceededError;
+            }
+
             var result = @event.UpdateDetails(
                 @event.Name,
                 @event.Description,

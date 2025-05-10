@@ -1,28 +1,36 @@
 ﻿namespace Application.Events.Queries.GetEvents
 {
-    using Domain.Event;
+    using Application.Common.Contracts;
+    using Application.Common.Models;
     using Domain.Event.Error;
-    using Domain.Event.Repository;
     using ErrorOr;
     using MediatR;
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetEventsQueryHandler: IRequestHandler<GetEventsQuery, ErrorOr<List<GetEventsOutputModel>>>
+    public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, ErrorOr<PaginatedResult<GetEventsOutputModel>>>
     {
-        private readonly IEventDomainRepository _repository;
-        public GetEventsQueryHandler(IEventDomainRepository repository) 
+        private readonly IEventQueryRepository _repository;
+        public GetEventsQueryHandler(IEventQueryRepository repository)
             => _repository = repository;
 
-        public async Task<ErrorOr<List<GetEventsOutputModel>>> Handle(
-            GetEventsQuery request,
-            CancellationToken cancellationToken)
+        public async Task<ErrorOr<PaginatedResult<GetEventsOutputModel>>> Handle(
+         GetEventsQuery request,
+         CancellationToken cancellationToken)
         {
-            var events = await _repository.GetEventsByFilter(
-                predicate: e => e.Status == EventStatus.Active,
+            var paginatedEvents = await _repository.GetActiveEventsAsync(
+                request.PageIndex,
+                request.PageSize,
+                request.Ordering,
                 cancellationToken);
 
-            var result = events
+            if (paginatedEvents.TotalCount == 0)
+            {
+                return EventErrors.NoEventsFoundError;
+            }
+
+            var output = paginatedEvents
+                .Items
                 .Select(e => new GetEventsOutputModel(
                     e.Id,
                     e.Name,
@@ -32,12 +40,11 @@
                     e.Status.ToString()))
                 .ToList();
 
-            if (result.Count == 0)
-            {
-                return EventErrors.NoEventsFoundError;
-            }
-
-            return result;
+            return new PaginatedResult<GetEventsOutputModel>(
+                output,
+                paginatedEvents.PageIndex,
+                paginatedEvents.PageSize,
+                paginatedEvents.TotalCount);
         }
     }
 }

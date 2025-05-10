@@ -1,6 +1,6 @@
 ﻿namespace Application.Events.Queries.GetEventsByVenue
 {
-    using Common.Contracts;
+    using Application.Common.Contracts;
     using ErrorOr;
     using GetEvents;
     using MediatR;

@@ -1,5 +1,6 @@
 ﻿namespace Web.Features
 {
+    using Application.Common.Models;
     using Application.Events.Commands.Cancel;
     using Application.Events.Commands.Create;
     using Application.Events.Commands.Update;
@@ -7,6 +8,7 @@
     using Application.Events.Queries.GetEvents;
     using Application.Events.Queries.GetEventsByHost;
     using Application.Events.Queries.GetEventsByVenue;
+    using Application.Events.Queries.GetEventsInDateRange;
     using Application.Events.Queries.SearchEvents;
     using Microsoft.AspNetCore.Mvc;
 
@@ -14,8 +16,11 @@
     [Route("api/[controller]")]
     public class EventsController : ApiController
     {
-        [HttpGet]
-        public Task<ActionResult<List<GetEventsOutputModel>>> All([FromQuery] GetEventsQuery query) => Send(query);
+        [HttpGet("all", Name =nameof(All))]
+        public Task<ActionResult<PaginatedResult<GetEventsOutputModel>>> All([FromQuery] GetEventsQuery query) => Send(query);
+
+        [HttpGet("filterByDate", Name =nameof(FilterByDate))]
+        public Task<ActionResult<PaginatedResult<GetEventsInDateRangeOutputModel>>> FilterByDate([FromQuery] GetEventsInDateRangeQuery query) => Send(query);
 
         [HttpGet("search", Name = nameof(Search))]
         public Task<ActionResult<List<GetEventsOutputModel>>> Search([FromQuery] SearchEventsQuery query) => Send(query);

@@ -1,16 +1,16 @@
-﻿namespace Application.Events.Queries.GetEvents
+﻿namespace Application.Events.Queries.GetEventsInDateRange
 {
     using Domain.Event;
 
-    public record GetEventsOutputModel
+    public record GetEventsInDateRangeOutputModel
     {
-        public GetEventsOutputModel(
-            Guid id,
-            string name,
-            string description,
-            DateOnly date,
-            TimeRange time,
-            string status)
+        public GetEventsInDateRangeOutputModel(
+         Guid id,
+         string name,
+         string description,
+         DateOnly date,
+         TimeRange time,
+         string status)
         {
             Id = id;
             Name = name;

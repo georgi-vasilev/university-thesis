@@ -1,7 +1,6 @@
 ﻿namespace Domain.Event.Error
 {
     using ErrorOr;
-    using System.Data;
 
     public static class EventErrors
     {
@@ -103,6 +102,10 @@
 
         public static readonly Error NoEventsFoundWithProvidedSearchTermError = Error.NotFound(
             code: "Event.SearchEventsQuery",
-        description: "No events were found with the provided search term.");
+            description: "No events were found with the provided search term.");
+
+        public static readonly Error NoEventsFoundInTheGivenTimeRangeError = Error.NotFound(
+            code: "Event.GetEventsInDateRangeQuery",
+            description: "No events were found in the given time range.");
     }
 }
