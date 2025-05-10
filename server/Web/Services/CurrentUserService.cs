@@ -7,18 +7,22 @@
 
     public class CurrentUserService : ICurrentUser
     {
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        private readonly IHttpContextAccessor _accessor;
+
+        public CurrentUserService(IHttpContextAccessor accessor)
         {
-            var user = httpContextAccessor.HttpContext?.User;
-
-            if (user == null)
-            {
-                throw new InvalidOperationException("This request does not have an authenticated user.");
-            }
-
-            this.UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            _accessor = accessor;
         }
 
-        public string UserId { get; }
+        public Guid UserId => Guid.Parse(_accessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        public string Role => _accessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role)!;
+        public Guid? HostId => GetGuidClaim("hostId");
+        public Guid? BuyerId => GetGuidClaim("buyerId");
+
+        private Guid? GetGuidClaim(string claimType)
+        {
+            var claim = _accessor.HttpContext?.User.FindFirst(claimType)?.Value;
+            return string.IsNullOrEmpty(claim) ? null : Guid.Parse(claim);
+        }
     }
 }

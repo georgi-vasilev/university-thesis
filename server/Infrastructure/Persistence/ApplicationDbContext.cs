@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Persistence
 {
+    using Domain.Buyer;
     using Domain.Event;
     using Domain.Host;
     using Domain.Order;
@@ -8,7 +9,7 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    public class ApplicationDbContext : IdentityDbContext<User>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -20,6 +21,7 @@
         public DbSet<Order> Orders { get; set; } = default!;
         public DbSet<Ticket> Tickets { get; set; } = default!;
         public DbSet<Venue> Venues { get; set; } = default!;
+        public DbSet<Buyer> Buyers { get; set; } = default!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

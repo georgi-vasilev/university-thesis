@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Persistence
 {
+    using Domain.Buyer;
     using Domain.Event;
     using Domain.Host;
     using Domain.Order;
@@ -12,6 +13,7 @@
         DbSet<Host> Hosts { get; }
         DbSet<Order> Orders { get; }
         DbSet<Venue> Venues { get; }
+        DbSet<Buyer> Buyers { get; }
         Task<int> SaveChangesAsync(CancellationToken ct = default);
     }
 }

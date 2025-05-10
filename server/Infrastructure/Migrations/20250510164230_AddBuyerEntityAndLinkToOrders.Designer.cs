@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250510164230_AddBuyerEntityAndLinkToOrders")]
+    partial class AddBuyerEntityAndLinkToOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,13 +251,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuyerId")
-                        .IsUnique()
-                        .HasFilter("[BuyerId] IS NOT NULL");
-
-                    b.HasIndex("HostId")
-                        .IsUnique()
-                        .HasFilter("[HostId] IS NOT NULL");
+                    b.HasIndex("HostId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -633,17 +630,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Authentication.ApplicationUser", b =>
                 {
-                    b.HasOne("Domain.Buyer.Buyer", "Buyer")
-                        .WithOne()
-                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Host.Host", "Host")
-                        .WithOne()
-                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "HostId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Buyer");
+                        .WithMany()
+                        .HasForeignKey("HostId");
 
                     b.Navigation("Host");
                 });

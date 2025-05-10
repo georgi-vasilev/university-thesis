@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Persistence.Configurations
 {
+    using Domain.Buyer;
     using Domain.Event;
     using Domain.Order;
     using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,10 @@
             builder.HasOne<Event>()
                 .WithMany()
                 .HasForeignKey(o => o.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<Buyer>()
+                .WithMany()
+                .HasForeignKey(o => o.BuyerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.OwnsOne(o => o.Payment, pd =>

@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250510155741_AddHostAndBuyerIdToApplicationUser")]
+    partial class AddHostAndBuyerIdToApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Buyer.Buyer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Buyers", (string)null);
-                });
 
             modelBuilder.Entity("Domain.Event.Event", b =>
                 {
@@ -122,8 +96,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
 
                     b.HasIndex("EventId");
 
@@ -248,13 +220,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuyerId")
-                        .IsUnique()
-                        .HasFilter("[BuyerId] IS NOT NULL");
-
-                    b.HasIndex("HostId")
-                        .IsUnique()
-                        .HasFilter("[HostId] IS NOT NULL");
+                    b.HasIndex("HostId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -498,12 +464,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Order.Order", b =>
                 {
-                    b.HasOne("Domain.Buyer.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Event.Event", null)
                         .WithMany()
                         .HasForeignKey("EventId")
@@ -633,17 +593,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Authentication.ApplicationUser", b =>
                 {
-                    b.HasOne("Domain.Buyer.Buyer", "Buyer")
-                        .WithOne()
-                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Host.Host", "Host")
-                        .WithOne()
-                        .HasForeignKey("Infrastructure.Authentication.ApplicationUser", "HostId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Buyer");
+                        .WithMany()
+                        .HasForeignKey("HostId");
 
                     b.Navigation("Host");
                 });

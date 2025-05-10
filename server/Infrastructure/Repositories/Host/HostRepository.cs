@@ -38,6 +38,9 @@
                 .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
+        public async Task<Host?> GetHostByEmailAsync(string email, CancellationToken cancellationToken) 
+            => await _context.Hosts.FirstOrDefaultAsync(h => h.ContactInfo.Email == email, cancellationToken);
+
         public async Task UpdateAsync(Host aggregate, CancellationToken cancellationToken)
         {
             _context.Hosts.Update(aggregate);
