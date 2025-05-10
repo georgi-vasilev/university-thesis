@@ -18,9 +18,19 @@
             GetEventsQuery request,
             CancellationToken cancellationToken)
         {
-            var events = await _repository.GetEventsByFilter(
+            var events = await _repository.GetEventsByFilterAsync(
                 predicate: e => e.Status == EventStatus.Active,
                 cancellationToken);
+
+            if (events is null)
+            {
+                return EventErrors.NoEventsFoundError;
+            }
+
+            if (events.Count() == 0)
+            {
+                return EventErrors.NoEventsFoundError;
+            }
 
             var result = events
                 .Select(e => new GetEventsOutputModel(
@@ -31,11 +41,6 @@
                     e.Time,
                     e.Status.ToString()))
                 .ToList();
-
-            if (result.Count == 0)
-            {
-                return EventErrors.NoEventsFoundError;
-            }
 
             return result;
         }

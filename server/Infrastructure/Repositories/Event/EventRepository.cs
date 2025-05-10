@@ -51,7 +51,7 @@
             return all.FirstOrDefault(predicate);
         }
 
-        public async Task<IEnumerable<Event>> GetEventsByFilter(Func<Event, bool> predicate, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Event>> GetEventsByFilterAsync(Func<Event, bool> predicate, CancellationToken cancellationToken)
         {
             var all = await _context
                 .Events

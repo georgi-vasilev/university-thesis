@@ -21,7 +21,7 @@
             var pattern = $@"\b{Regex.Escape(request.SearchTerm)}\b";
             var regex = new Regex(pattern, RegexOptions.IgnoreCase);
 
-            var events = await _repository.GetEventsByFilter(
+            var events = await _repository.GetEventsByFilterAsync(
                 predicate: e =>
                     e.Name.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase) ||
                     regex.IsMatch(e.Description),

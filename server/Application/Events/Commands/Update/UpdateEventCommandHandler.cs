@@ -54,7 +54,7 @@
             }
 
             var eventsAtVenue = await _eventRepository
-                .GetEventsByFilter(
+                .GetEventsByFilterAsync(
                 predicate: @event => @event.VenueId == request.VenueId && @event.Date == request.Date,
                 cancellationToken);
 
