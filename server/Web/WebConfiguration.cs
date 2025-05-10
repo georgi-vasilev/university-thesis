@@ -7,7 +7,7 @@
     using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
-    using Services;
+    using Web.Services;
 
     public static class WebConfiguration
     {

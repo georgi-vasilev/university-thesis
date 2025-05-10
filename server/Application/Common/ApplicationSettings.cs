@@ -2,8 +2,8 @@
 {
     public class ApplicationSettings
     {
-        public ApplicationSettings() => this.Secret = default!;
-
-        public string Secret { get; private set; }
+        public string Secret { get; init; } = default!;
+        public string Issuer { get; init; } = default!;
+        public string Audience { get; init; } = default!;
     }
 }
