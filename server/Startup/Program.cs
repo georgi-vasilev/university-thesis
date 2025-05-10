@@ -3,6 +3,7 @@ namespace Startup
     using Application;
     using Domain;
     using Infrastructure;
+    using Microsoft.OpenApi.Models;
     using Web;
 
     public class Program
@@ -17,7 +18,35 @@ namespace Startup
                 .AddApplication(builder.Configuration)
                 .AddInfrastructure(builder.Configuration)
                 .AddWebComponents()
-                .AddSwaggerGen();
+                .AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+
+                    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Bearer {your token}"
+                    });
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            Array.Empty<string>()
+                        }
+                    });
+                });
 
             var app = builder.Build();
 

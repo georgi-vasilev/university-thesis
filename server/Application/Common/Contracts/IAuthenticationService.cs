@@ -7,11 +7,13 @@
     public interface IAuthenticationService
     {
         Task<ErrorOr<string>> LoginAsync(string email, string password);
+
         Task<ErrorOr<string>> CreateHostUserAsync(
             string email,
             string password,
             Host host,
             CancellationToken cancellationToken);
+
         Task<ErrorOr<string>> CreateBuyerUserAsync(
             string email,
             string password,
