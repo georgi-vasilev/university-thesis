@@ -1,7 +1,6 @@
 ﻿namespace Domain.Event.Error
 {
     using ErrorOr;
-    using System.Data;
 
     public static class EventErrors
     {

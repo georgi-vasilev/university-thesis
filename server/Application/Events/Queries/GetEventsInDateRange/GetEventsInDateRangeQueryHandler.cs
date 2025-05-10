@@ -1,36 +1,40 @@
 ﻿namespace Application.Events.Queries.GetEventsInDateRange
 {
+    using Application.Common.Contracts;
+    using Application.Common.Models;
     using Domain.Event.Error;
-    using Domain.Event.Repository;
     using ErrorOr;
     using MediatR;
 
-    public class GetEventsInDateRangeQueryHandler : IRequestHandler<GetEventsInDateRangeQuery, ErrorOr<IEnumerable<GetEventsInDateRangeOutputModel>>>
+    public class GetEventsInDateRangeQueryHandler : IRequestHandler<GetEventsInDateRangeQuery, ErrorOr<PaginatedResult<GetEventsInDateRangeOutputModel>>>
     {
-        private IEventDomainRepository _repository;
+        private IEventQueryRepository _repository;
 
-        public GetEventsInDateRangeQueryHandler(IEventDomainRepository repository)
+        public GetEventsInDateRangeQueryHandler(IEventQueryRepository repository)
             => _repository = repository;
 
-        public async Task<ErrorOr<IEnumerable<GetEventsInDateRangeOutputModel>>> Handle(GetEventsInDateRangeQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<PaginatedResult<GetEventsInDateRangeOutputModel>>> Handle(
+        GetEventsInDateRangeQuery request,
+        CancellationToken cancellationToken)
         {
             var fromUtc = request.StartDate.ToUniversalTime();
             var toUtc = request.EndDate.ToUniversalTime();
-            var events = await _repository.GetEventsByFilterAsync(
-                predicate: e => e.Time.Start >= fromUtc && e.Time.End <= toUtc,
+
+            var paginatedEvents = await _repository.GetEventsInDateRangeAsync(
+                fromUtc,
+                toUtc,
+                request.PageIndex,
+                request.PageSize,
+                request.Ordering,
                 cancellationToken);
 
-            if (events is null)
+            if (paginatedEvents.TotalCount == 0)
             {
                 return EventErrors.NoEventsFoundInTheGivenTimeRangeError;
             }
 
-            if (events.Count() == 0)
-            {
-                return EventErrors.NoEventsFoundInTheGivenTimeRangeError;
-            }
-
-            var output = events
+            var output = paginatedEvents
+                .Items
                 .Select(e => new GetEventsInDateRangeOutputModel(
                     e.Id,
                     e.Name,
@@ -40,7 +44,11 @@
                     e.Status.ToString()))
                 .ToList();
 
-            return output;
+            return new PaginatedResult<GetEventsInDateRangeOutputModel>(
+                output,
+                paginatedEvents.PageIndex,
+                paginatedEvents.PageSize,
+                paginatedEvents.TotalCount);
         }
     }
 }
