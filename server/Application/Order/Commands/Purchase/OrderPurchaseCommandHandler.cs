@@ -1,6 +1,7 @@
 ﻿namespace Application.Order.Commands.Purchase
 {
     using Application.Services.Contracts.Payment;
+    using Application.Services.Contracts.User;
     using Complete;
     using Domain.Event;
     using Domain.Event.Error;
@@ -25,6 +26,7 @@
         private readonly ITicketBuilder _ticketBuilder;
         private readonly IMediator _mediator;
         private readonly ILogger<OrderPurchaseCommandHandler> _logger;
+        private readonly ICurrentUser _currentUser;
 
         public OrderPurchaseCommandHandler(
             IOrderDomainRepository orderRepository,
@@ -34,7 +36,8 @@
             IOrderBuilder orderBuilder,
             ITicketBuilder ticketBuilder,
             IMediator mediator,
-            ILogger<OrderPurchaseCommandHandler> logger)
+            ILogger<OrderPurchaseCommandHandler> logger,
+            ICurrentUser currentUser)
         {
             _orderRepository = orderRepository;
             _eventRepository = eventRepository;
@@ -44,13 +47,23 @@
             _ticketBuilder = ticketBuilder;
             _mediator = mediator;
             _logger = logger;
+            _currentUser = currentUser;
         }
 
         public async Task<ErrorOr<Success>> Handle(OrderPurchaseCommand request, CancellationToken cancellationToken)
         {
+            if (_currentUser.BuyerId is null)
+            {
+                _logger.LogWarning("HostId claim is missing for user {UserId}", _currentUser.UserId);
+                return EventErrors.Unauthorized;
+            }
+
+            var buyerId = _currentUser.BuyerId.Value;
+            _logger.LogInformation("Handling CreateOrderCommand for Buyer {BuyerId}", buyerId);
+
             _logger.LogInformation(
                 "Handling OrderPurchaseCommand for Buyer {BuyerId}, Event {EventId}",
-                request.BuyerId, request.EventId);
+                buyerId, request.EventId);
             var @event = await _eventRepository.GetByIdAsync(request.EventId, cancellationToken);
             if (@event is null)
             {
@@ -87,19 +100,19 @@
             {
                 _logger.LogWarning(
                     "Payment failed for Buyer {BuyerId}: {ErrorCode}",
-                    request.BuyerId, paymentResult.FirstError.Code);
+                    buyerId, paymentResult.FirstError.Code);
                 return paymentResult.FirstError;
             }
 
             var orderResult = _orderBuilder
-                .WithBuyer(request.BuyerId)
+                .WithBuyer(buyerId)
                 .Build();
 
             if (orderResult.IsError)
             {
                 _logger.LogWarning(
                     "OrderBuilder failed for Buyer {BuyerId}: {ErrorCode}",
-                    request.BuyerId, orderResult.FirstError.Code);
+                    buyerId, orderResult.FirstError.Code);
                 return orderResult.FirstError;
             }
 
@@ -134,12 +147,12 @@
                 await _orderRepository.AddAsync(order, cancellationToken);
                 _logger.LogInformation(
                     "Order {OrderId} created and ticket added for Buyer {BuyerId}.",
-                    order.Id, request.BuyerId);
+                    order.Id, buyerId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
-                    ex, "Error creating Order for Buyer {BuyerId}.", request.BuyerId);
+                    ex, "Error creating Order for Buyer {BuyerId}.", buyerId);
                 return OrderError.UnexpectedError;
             }
 

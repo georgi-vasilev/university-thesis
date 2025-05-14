@@ -1,5 +1,6 @@
 ﻿namespace Application.Events.Commands.Cancel
 {
+    using Application.Services.Contracts.User;
     using Domain.Event.Error;
     using Domain.Event.Repository;
     using Domain.Host.Error;
@@ -15,6 +16,7 @@
         private readonly IHostDomainRepository _hostRepository;
         private readonly IEventDomainRepository _eventRepository;
         private readonly ILogger<CancelEventCommandHandler> _logger;
+        private readonly ICurrentUser _currentUser;
 
         public CancelEventCommandHandler(
             IHostDomainRepository repository,
@@ -30,15 +32,23 @@
             CancelEventCommand request,
             CancellationToken cancellationToken)
         {
+            if (_currentUser.HostId is null)
+            {
+                _logger.LogWarning("HostId claim is missing for user {UserId}", _currentUser.UserId);
+                return EventErrors.Unauthorized;
+            }
+
+            var hostId = _currentUser.HostId.Value;
+
             _logger.LogInformation(
                 "Handling CancelEventCommand for Host {HostId}, Event {EventId}, NewStatus {Status}",
-                request.HostId, request.EventId, request.Status);
+                hostId, request.EventId, request.Status);
 
-            var host = await _hostRepository.GetByIdAsync(request.HostId, cancellationToken);
+            var host = await _hostRepository.GetByIdAsync(hostId, cancellationToken);
 
             if(host is null)
             {
-                _logger.LogWarning("Host {HostId} not found.", request.HostId);
+                _logger.LogWarning("Host {HostId} not found.", hostId);
                 return HostErrors.HostNotFoundError;
             }
 
@@ -46,19 +56,19 @@
             {
                 _logger.LogWarning(
                     "Host {HostId} does not organize Event {EventId}.",
-                    request.HostId, request.EventId);
+                    hostId, request.EventId);
                 return HostErrors.EventDoesNotExistError;
             }
 
             var @event = await _eventRepository.GetEventByFilterAsync(
-                predicate: e => e.HostId == request.HostId && e.Id == request.EventId,
+                predicate: e => e.HostId == hostId && e.Id == request.EventId,
                 cancellationToken);
 
             if (@event is null)
             {
                 _logger.LogWarning(
                     "Event {EventId} not found for Host {HostId}.",
-                    request.EventId, request.HostId);
+                    request.EventId, hostId);
                 return EventErrors.EventNotFoundError;
             }
 

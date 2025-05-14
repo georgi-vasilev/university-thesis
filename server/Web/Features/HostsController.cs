@@ -5,12 +5,14 @@
     using Application.Host.Commands.Update.PhoneNumber;
     using Application.Host.Commands.Update.Venue;
     using Application.Host.Queries;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class HostsController : ApiController
     {
         [HttpGet("details/{Id:guid}", Name = nameof(GetHostDetailsQuery))]

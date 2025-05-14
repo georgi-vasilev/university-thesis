@@ -3,9 +3,5 @@
     using ErrorOr;
     using MediatR;
 
-    public record UpdatePhoneNumberCommand : IRequest<ErrorOr<UpdatePhoneNumberOutputModel>>
-    {
-        public Guid Id { get; init; }
-        public string PhoneNumber { get; init; } = default!;
-    }
+    public record UpdatePhoneNumberCommand(string PhoneNumber) : IRequest<ErrorOr<UpdatePhoneNumberOutputModel>>;
 }

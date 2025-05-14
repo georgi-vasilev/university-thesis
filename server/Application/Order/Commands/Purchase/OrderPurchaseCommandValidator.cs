@@ -6,10 +6,6 @@
     {
         public OrderPurchaseCommandValidator()
         {
-            RuleFor(cmd => cmd.BuyerId)
-                .NotEmpty()
-                    .WithMessage("Buyer ID must be provided.");
-
             RuleFor(cmd => cmd.EventId)
                 .NotEmpty()
                     .WithMessage("Event ID must be provided.");

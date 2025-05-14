@@ -20,6 +20,7 @@
     using Repositories.Event;
     using Repositories.Host;
     using Services;
+    using System.Security.Claims;
     using System.Text;
 
     public static class InfrastructureConfiguration
@@ -74,19 +75,25 @@
 
             var key = Encoding.UTF8.GetBytes(settings.Secret);
 
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = settings.Issuer,
                         ValidateAudience = true,
-                        ValidAudience = settings.Audience,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                        ValidIssuer = settings.Issuer,
+                        ValidAudience = settings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        NameClaimType = ClaimTypes.NameIdentifier,
+                        RoleClaimType = ClaimTypes.Role,
                     };
                 });
 

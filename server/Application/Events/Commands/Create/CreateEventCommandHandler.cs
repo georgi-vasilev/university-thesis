@@ -5,9 +5,12 @@
     using Domain.Event.Error;
     using Domain.Event.Repository;
     using Domain.Event.Service;
+    using Domain.Venue.Error;
+    using Domain.Venue.Repository;
     using ErrorOr;
     using MediatR;
     using Microsoft.Extensions.Logging;
+    using Services.Contracts.User;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -17,26 +20,41 @@
         private readonly IEventBuilder _eventBuilder;
         private readonly IEventSchedulingService _eventScheduling;
         private readonly ILogger<CreateEventCommandHandler> _logger;
+        private readonly IVenueDomainRepository _venueRepository;
+        private readonly ICurrentUser _currentUser;
 
         public CreateEventCommandHandler(
             IEventDomainRepository repository,
             IEventBuilder eventBuilder,
             IEventSchedulingService eventScheduling,
-            ILogger<CreateEventCommandHandler> logger)
+            ILogger<CreateEventCommandHandler> logger,
+            IVenueDomainRepository venueRepository,
+            ICurrentUser currentUser)
         {
             _repository = repository;
             _eventBuilder = eventBuilder;
             _eventScheduling = eventScheduling;
             _logger = logger;
+            _venueRepository = venueRepository;
+            _currentUser = currentUser;
         }
 
         public async Task<ErrorOr<CreateEventOutputModel>> Handle(
             CreateEventCommand request,
             CancellationToken cancellationToken)
         {
+            if (_currentUser.HostId is null)
+            {
+                _logger.LogWarning("HostId claim is missing for user {UserId}", _currentUser.UserId);
+                return EventErrors.Unauthorized;
+            }
+
+            var hostId = _currentUser.HostId.Value;
+
             _logger.LogInformation(
                 "Handling CreateEventCommand for Host {HostId}, Venue {VenueId}, Date {Date}",
-                request.HostId, request.VenueId, request.Date);
+                hostId, request.VenueId, request.Date);
+
             var time = TimeRange.FromDateTimes(request.StartTime, request.EndTime).Value;
 
             var schedulingResult = await _eventScheduling.ValidateNewEventAsync(request.VenueId, request.Date, time, cancellationToken);
@@ -48,12 +66,23 @@
                 return schedulingResult.FirstError;
             }
 
+            var venue = await _venueRepository.GetByIdAsync(request.VenueId, cancellationToken);
+            if(venue is null)
+            {
+                return VenueErrors.VenueNotFoundError;
+            }
+
+            if(venue.Capacity < request.Capacity)
+            {
+                return VenueErrors.CapacityExceededError;
+            }
+
             var eventBuildResult = _eventBuilder
                 .WithName(request.Name)
                 .WithDescription(request.Description)
                 .WithDate(request.Date)
                 .WithTime(time)
-                .WithHostId(request.HostId)
+                .WithHostId(hostId)
                 .WithVenue(request.VenueId)
                 .Build();
 
@@ -61,9 +90,9 @@
             {
                 _logger.LogWarning(
                     "EventBuilder failed for Host {HostId}, Venue {VenueId}: {ErrorCode}",
-                    request.HostId, request.VenueId, eventBuildResult.FirstError.Code);
+                    hostId, request.VenueId, eventBuildResult.FirstError.Code);
                 return eventBuildResult.FirstError;
-            }
+            }   
 
             var @event = eventBuildResult.Value;
 
@@ -72,14 +101,14 @@
                 await _repository.AddAsync(@event, cancellationToken);
                 _logger.LogInformation(
                     "Event {EventId} created successfully for Host {HostId}.",
-                    @event.Id, request.HostId);
+                    @event.Id, hostId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     ex,
                     "Error persisting Event for Host {HostId}, Venue {VenueId}.",
-                    request.HostId, request.VenueId);
+                    hostId, request.VenueId);
                 return EventErrors.UnexpectedError;
             }
 

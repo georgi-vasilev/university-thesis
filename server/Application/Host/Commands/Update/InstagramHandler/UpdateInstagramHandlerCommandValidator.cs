@@ -6,10 +6,6 @@
     {
         public UpdateInstagramHandlerCommandValidator()
         {
-            this.RuleFor(host => host.Id)
-                .NotEmpty()
-                    .WithMessage("Host id must be provided");
-
             this.RuleFor(host => host.InstagramHandler)
                 .NotEmpty()
                     .WithMessage("Instagram handler cannot be empty string.")
