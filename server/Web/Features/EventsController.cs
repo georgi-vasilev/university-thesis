@@ -10,16 +10,19 @@
     using Application.Events.Queries.GetEventsByVenue;
     using Application.Events.Queries.GetEventsInDateRange;
     using Application.Events.Queries.SearchEvents;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EventsController : ApiController
     {
-        [HttpGet("all", Name =nameof(All))]
+        [HttpGet("all", Name = nameof(All))]
         public Task<ActionResult<PaginatedResult<GetEventsOutputModel>>> All([FromQuery] GetEventsQuery query) => Send(query);
 
-        [HttpGet("filterByDate", Name =nameof(FilterByDate))]
+        [HttpGet("filterByDate", Name = nameof(FilterByDate))]
         public Task<ActionResult<PaginatedResult<GetEventsInDateRangeOutputModel>>> FilterByDate([FromQuery] GetEventsInDateRangeQuery query) => Send(query);
 
         [HttpGet("search", Name = nameof(Search))]
@@ -34,7 +37,7 @@
         [HttpGet("venue/{Id:guid}", Name = nameof(GetEventsByVenue))]
         public Task<ActionResult<List<GetEventsOutputModel>>> GetEventsByVenue([FromRoute] GetEventsByVenueQuery query) => Send(query);
 
-        [HttpPost]
+        [HttpPost("create", Name = nameof(Create))]
         public Task<ActionResult<CreateEventOutputModel>> Create([FromBody] CreateEventCommand command) => Send(command);
 
         [HttpPut("{id:guid}")]

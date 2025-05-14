@@ -107,5 +107,9 @@
         public static readonly Error NoEventsFoundInTheGivenTimeRangeError = Error.NotFound(
             code: "Event.GetEventsInDateRangeQuery",
             description: "No events were found in the given time range.");
+
+        public static readonly Error Unauthorized = Error.Unauthorized(
+            code: "Unauthorized access",
+            description: "You are not allowed to perform this action");
     }
 }

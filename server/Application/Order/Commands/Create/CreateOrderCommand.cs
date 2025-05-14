@@ -3,8 +3,5 @@
     using ErrorOr;
     using MediatR;
 
-    public record CreateOrderCommand : IRequest<ErrorOr<CreateOrderOutputModel>>
-    {
-        public Guid BuyerId { get; init; }
-    }
+    public record CreateOrderCommand : IRequest<ErrorOr<CreateOrderOutputModel>>;
 }

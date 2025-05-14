@@ -1,15 +1,11 @@
-﻿using FluentValidation;
-
-namespace Application.Host.Commands.Update.Email
+﻿namespace Application.Host.Commands.Update.Email
 {
+    using FluentValidation;
+
     public class UpdateEmailCommandValidator : AbstractValidator<UpdateEmailCommand>
     {
         public UpdateEmailCommandValidator()
         {
-            this.RuleFor(host => host.Id)
-                .NotEmpty()
-                    .WithMessage("Host id must be provided");
-
             this.RuleFor(host => host.Email)
                .NotEmpty()
                    .WithMessage("Email cannot be empty string.")

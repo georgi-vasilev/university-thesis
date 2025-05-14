@@ -42,11 +42,6 @@
                 .NotEmpty()
                     .WithMessage("Venue id must be provided");
 
-
-            this.RuleFor(e => e.HostId)
-                .NotEmpty()
-                    .WithMessage("Host id must be provided");
-
             this.RuleFor(e => e.Capacity)
                 .GreaterThan(0)
                     .WithMessage("Capacity cannot be 0");

@@ -6,10 +6,6 @@
     {
         public UpdatePhoneNumberCommandValidator()
         {
-            this.RuleFor(host => host.Id)
-                .NotEmpty()
-                    .WithMessage("Host id must be provided");
-
             this.RuleFor(host => host.PhoneNumber)
                 .NotEmpty()
                     .WithMessage("Phone number cannot be empty string.")

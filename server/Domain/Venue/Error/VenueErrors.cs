@@ -19,5 +19,9 @@
         public static readonly Error VenueNotFoundError = Error.Validation(
             code: "Venue.NotFound",
             description: "Venue not found!");
+
+        public static readonly Error CapacityExceededError = Error.Validation(
+            code: "Venue.CreateEventCommandHandler",
+            description: "The requested capacity exceeds the venue capacity.");
     }
 }
