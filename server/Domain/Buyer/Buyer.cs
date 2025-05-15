@@ -22,5 +22,11 @@
             LastName = lastName;
             Email = email;
         }
+
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
+        }
     }
 }

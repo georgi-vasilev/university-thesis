@@ -29,7 +29,7 @@
             Type = type;
         }
 
-        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-        private void ClearDomainEvents() => _domainEvents.Clear();
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void ClearDomainEvents() => _domainEvents.Clear();
     }
 }

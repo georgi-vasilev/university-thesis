@@ -66,38 +66,52 @@
             return eventDetails;
         }
 
-        public async Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByHostAsync(Guid hostId, CancellationToken cancelletionToken)
+        public async Task<ErrorOr<PaginatedResult<GetEventsOutputModel>>> GetEventsByHostAsync(
+            Guid hostId,
+            int pageIndex,
+            int pageSize,
+            EventOrdering ordering,
+            CancellationToken cancellationToken)
         {
-            var eventDetails = await(
-                from e in _context.Events.AsNoTracking()
-                join h in _context.Hosts.AsNoTracking()
-                    on e.HostId equals h.Id
-                where e.HostId == hostId
-                select new GetEventsOutputModel(
-                e.Id,
-                e.Name,
-                e.Description,
-                e.Date,
-                e.Time,
-                e.Status.ToString()
-                )).ToListAsync(cancelletionToken);
+            var baseQuery = _context.Events
+                .AsNoTracking()
+                .Where(e => e.HostId == hostId);
 
-            if(eventDetails is null)
+            var totalCount = await baseQuery.CountAsync(cancellationToken);
+
+            if (totalCount == 0)
             {
                 return EventErrors.GetEventsByHostNotFoundError;
             }
 
-            if (eventDetails.Count == 0)
-            {
-                return EventErrors.GetEventsByHostNotFoundError;
-            }
+            var orderedQuery = ApplyOrdering(baseQuery, ordering);
 
-            return eventDetails;
+            var eventDetails = await orderedQuery
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(e => new GetEventsOutputModel(
+                    e.Id,
+                    e.Name,
+                    e.Description,
+                    e.Date,
+                    e.Time,
+                    e.Status.ToString()))
+                .ToListAsync(cancellationToken);
+
+                var result = new PaginatedResult<GetEventsOutputModel>(
+                    eventDetails,
+                    pageIndex,
+                    pageSize,
+                    totalCount
+                );
+
+            return result;
         }
+
 
         public async Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByVenueAsync(Guid venueId, CancellationToken cancelletionToken)
         {
-            var eventDetails = await(
+            var eventDetails = await (
               from e in _context.Events.AsNoTracking()
               join h in _context.Hosts.AsNoTracking()
                   on e.HostId equals h.Id

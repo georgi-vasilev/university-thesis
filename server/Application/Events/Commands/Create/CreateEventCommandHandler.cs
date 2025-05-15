@@ -3,8 +3,9 @@
     using Domain.Event;
     using Domain.Event.Builder;
     using Domain.Event.Error;
-    using Domain.Event.Repository;
     using Domain.Event.Service;
+    using Domain.Host.Error;
+    using Domain.Host.Repository;
     using Domain.Venue.Error;
     using Domain.Venue.Repository;
     using ErrorOr;
@@ -16,27 +17,30 @@
 
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ErrorOr<CreateEventOutputModel>>
     {
-        private readonly IEventDomainRepository _repository;
         private readonly IEventBuilder _eventBuilder;
         private readonly IEventSchedulingService _eventScheduling;
         private readonly ILogger<CreateEventCommandHandler> _logger;
         private readonly IVenueDomainRepository _venueRepository;
+        private readonly IHostDomainRepository _hostRepository;
         private readonly ICurrentUser _currentUser;
+        private readonly IEventHostService  _eventHostService;
 
         public CreateEventCommandHandler(
-            IEventDomainRepository repository,
             IEventBuilder eventBuilder,
             IEventSchedulingService eventScheduling,
             ILogger<CreateEventCommandHandler> logger,
             IVenueDomainRepository venueRepository,
-            ICurrentUser currentUser)
+            ICurrentUser currentUser,
+            IHostDomainRepository hostRepository,
+            IEventHostService eventHostService)
         {
-            _repository = repository;
             _eventBuilder = eventBuilder;
             _eventScheduling = eventScheduling;
             _logger = logger;
             _venueRepository = venueRepository;
             _currentUser = currentUser;
+            _hostRepository = hostRepository;
+            _eventHostService = eventHostService;
         }
 
         public async Task<ErrorOr<CreateEventOutputModel>> Handle(
@@ -50,6 +54,12 @@
             }
 
             var hostId = _currentUser.HostId.Value;
+
+            var host = await _hostRepository.GetByIdAsync(hostId, cancellationToken);
+            if(host is null)
+            {
+                return HostErrors.HostNotFoundError;
+            }
 
             _logger.LogInformation(
                 "Handling CreateEventCommand for Host {HostId}, Venue {VenueId}, Date {Date}",
@@ -83,7 +93,7 @@
                 .WithDate(request.Date)
                 .WithTime(time)
                 .WithHostId(hostId)
-                .WithVenue(request.VenueId)
+                .WithVenue(venue.Id)
                 .Build();
 
             if (eventBuildResult.IsError)
@@ -98,7 +108,7 @@
 
             try
             {
-                await _repository.AddAsync(@event, cancellationToken);
+                await _eventHostService.CreateEventForHostAsync(host, @event, cancellationToken);
                 _logger.LogInformation(
                     "Event {EventId} created successfully for Host {HostId}.",
                     @event.Id, hostId);
@@ -111,7 +121,6 @@
                     hostId, request.VenueId);
                 return EventErrors.UnexpectedError;
             }
-
             return new CreateEventOutputModel(@event.Name, @event.Description, @event.Date, @event.Time);
         }
     }
