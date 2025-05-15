@@ -4,6 +4,9 @@
     using Domain.Venue.Repository;
     using Microsoft.EntityFrameworkCore;
     using Persistence;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     internal class VenueRepository : IVenueDomainRepository
     {
@@ -27,6 +30,11 @@
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
+
+        public async Task<IEnumerable<Venue>> GetAllAsync(CancellationToken cancellationToken) 
+            => await _context.Venues
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
 
         public async Task<Venue?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
