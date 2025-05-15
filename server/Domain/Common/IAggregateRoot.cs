@@ -4,5 +4,6 @@
     {
         Guid Id { get; }
         IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
+        void ClearDomainEvents();
     }
 }

@@ -4,6 +4,7 @@
     using Domain.Venue;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
+    using System.Text.Json;
 
     internal class HostConfiguration : IEntityTypeConfiguration<Host>
     {
@@ -45,6 +46,15 @@
                   .HasColumnName("InstagramHandler")
                   .HasMaxLength(50);
             });
+
+            builder.Property<List<Guid>>("_organizedEventIds")
+                .HasColumnName("OrganizedEventIds")
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v ?? new List<Guid>(), (JsonSerializerOptions)null),
+                    v => string.IsNullOrWhiteSpace(v)
+                        ? new List<Guid>()
+                        : JsonSerializer.Deserialize<List<Guid>>(v, (JsonSerializerOptions)null))
+                .HasColumnType("nvarchar(max)");
 
             builder.Ignore(h => h.DomainEvents);
         }

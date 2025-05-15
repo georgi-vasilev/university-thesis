@@ -10,7 +10,12 @@
     public interface IEventQueryRepository
     {
         Task<ErrorOr<GetEventDetailsOutputModel>> GetDetailsAsync(Guid eventId, CancellationToken cancelletionToken);
-        Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByHostAsync(Guid hostId, CancellationToken cancelletionToken);
+        Task<ErrorOr<PaginatedResult<GetEventsOutputModel>>> GetEventsByHostAsync(
+            Guid hostId,
+            int pageIndex,
+            int pageSize,
+            EventOrdering ordering,
+            CancellationToken cancellationToken);
         Task<ErrorOr<List<GetEventsOutputModel>>> GetEventsByVenueAsync(Guid venueId, CancellationToken cancelletionToken);
         Task<PaginatedResult<Event>> GetActiveEventsAsync(
             int pageIndex,

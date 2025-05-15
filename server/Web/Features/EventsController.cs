@@ -31,8 +31,8 @@
         [HttpGet("details/{Id:guid}", Name = nameof(Details))]
         public Task<ActionResult<GetEventDetailsOutputModel>> Details([FromRoute] GetEventDetailsQuery query) => Send(query);
 
-        [HttpGet("host/{Id:guid}", Name = nameof(GetEventsByHost))]
-        public Task<ActionResult<List<GetEventsOutputModel>>> GetEventsByHost([FromRoute] GetEventsByHostQuery query) => Send(query);
+        [HttpGet("host", Name = nameof(GetEventsByHost))]
+        public Task<ActionResult<PaginatedResult<GetEventsOutputModel>>> GetEventsByHost([FromQuery] GetEventsByHostQuery query) => Send(query);
 
         [HttpGet("venue/{Id:guid}", Name = nameof(GetEventsByVenue))]
         public Task<ActionResult<List<GetEventsOutputModel>>> GetEventsByVenue([FromRoute] GetEventsByVenueQuery query) => Send(query);
@@ -43,7 +43,7 @@
         [HttpPut("{id:guid}")]
         public Task<ActionResult<UpdateCommandOutputModel>> Update([FromBody] UpdateEventCommand command) => Send(command);
 
-        [HttpDelete("{id:guid}")]
+        [HttpPost("cancel", Name = nameof(Cancel))]
         public Task<ActionResult> Cancel([FromBody] CancelEventCommand command) => Send(command);
 
     }

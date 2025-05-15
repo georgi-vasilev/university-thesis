@@ -6,14 +6,14 @@
 
     public class Host : IAggregateRoot
     {
-        private readonly HashSet<Guid> _organizedEventIds = new HashSet<Guid>();
+        private readonly List<Guid> _organizedEventIds = new List<Guid>();
         private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
 
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
         public Guid Id { get; private set; }
         public ContactInfo ContactInfo { get; private set; }
         public Guid? VenueId { get; private set; }
-        public IReadOnlyCollection<Guid> OrganizedEventIds => _organizedEventIds;
+        public IReadOnlyList<Guid> OrganizedEventIds => _organizedEventIds;
 
         private Host()
         {
@@ -33,10 +33,13 @@
 
         public ErrorOr<Success> AddOrganizedEvent(Guid eventId)
         {
-            if (!_organizedEventIds.Add(eventId))
+            var exists = _organizedEventIds.Any(x => x == eventId);
+            if (exists)
             {
                 return HostErrors.EventAlreadyAddedError;
             }
+
+            _organizedEventIds.Add(eventId);
 
             //TODO: dispatch domain event
             return Result.Success;
@@ -110,7 +113,7 @@
             return Result.Success;
         }
 
-        private void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-        private void ClearDomainEvents() => _domainEvents.Clear();
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void ClearDomainEvents() => _domainEvents.Clear();
     }
 }

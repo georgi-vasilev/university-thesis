@@ -1,11 +1,10 @@
 ﻿namespace Application.Events.Queries.GetEventsByHost
 {
+    using Application.Common.Models;
+    using Application.Events.Common;
     using ErrorOr;
     using GetEvents;
     using MediatR;
 
-    public record GetEventsByHostQuery : IRequest<ErrorOr<List<GetEventsOutputModel>>>
-    {
-        public Guid Id { get; init; }
-    }
+    public record GetEventsByHostQuery(int PageIndex, int PageSize, EventOrdering Ordering) : IRequest<ErrorOr<PaginatedResult<GetEventsOutputModel>>>;
 }

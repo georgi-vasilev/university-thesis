@@ -6,7 +6,7 @@
     {
         public GetEventsByHostQueryValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().WithMessage("Host ID cannot be empty.");
+            // TODO: add pagination validation
         }
     }
 }
