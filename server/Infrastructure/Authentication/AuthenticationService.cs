@@ -4,6 +4,8 @@
     using Application.Common.Contracts;
     using Domain.Buyer;
     using Domain.Host;
+    using Domain.Host.Builder;
+    using Domain.Host.Repository;
     using ErrorOr;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Options;
@@ -17,6 +19,9 @@
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationSettings _settings;
+        private readonly IHostDomainRepository _hostRepository;
+        private readonly IHostBuilder _hostBuilder;
+        private readonly IContactInfoBuilder _contactInfoBuilder;
 
         public AuthenticationService(
             UserManager<ApplicationUser> userManager,
@@ -26,6 +31,9 @@
             _userManager = userManager;
             _signInManager = signInManager;
             _settings = settings.Value;
+            _hostRepository = hostRepository;
+            _hostBuilder = hostBuilder;
+            _contactInfoBuilder = contactInfoBuilder;
         }
 
         public async Task<ErrorOr<string>> CreateHostUserAsync(
