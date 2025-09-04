@@ -2,7 +2,6 @@
 {
     using Application.Common;
     using Application.Common.Contracts;
-    using Application.Services.Contracts.Payment;
     using Authentication;
     using Domain.Buyer.Repository;
     using Domain.Event.Repository;
@@ -19,7 +18,6 @@
     using Repositories;
     using Repositories.Event;
     using Repositories.Host;
-    using Services;
     using Stripe;
     using System.Security.Claims;
     using System.Text;
