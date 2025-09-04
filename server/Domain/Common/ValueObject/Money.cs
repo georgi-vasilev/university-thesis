@@ -5,7 +5,7 @@
     public record Money : IEquatable<Money>
     {
         public decimal Amount { get; }
-        public string Currency { get; }
+        public string Currency { get; } = "USD";
 
         public Money(decimal amount, string currency)
         {

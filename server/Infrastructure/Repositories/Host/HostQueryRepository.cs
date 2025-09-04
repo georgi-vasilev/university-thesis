@@ -42,10 +42,13 @@
                     e.Id,
                     e.Name,
                     e.Description,
+                    e.ImageUrl,
                     v.Name,
                     hostDto.FullName,
                     e.Date,
                     e.Time,
+                    e.GeneralPrice.Amount,
+                    e.VipPrice.Amount,
                     e.Status.ToString(),
                     v.Capacity - e.TicketCount
                 )

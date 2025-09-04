@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250903121936_AddIndex_Orders_TransactionId")]
+    partial class AddIndex_Orders_TransactionId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,10 +71,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("HostId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -80,9 +79,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TicketCount")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("VenueId")
                         .HasColumnType("uniqueidentifier");
@@ -426,52 +422,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.Common.ValueObject.Money", "GeneralPrice", b1 =>
-                        {
-                            b1.Property<Guid>("EventId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("GeneralPriceAmount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("GeneralPriceCurrency");
-
-                            b1.HasKey("EventId");
-
-                            b1.ToTable("Events");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EventId");
-                        });
-
-                    b.OwnsOne("Domain.Common.ValueObject.Money", "VipPrice", b1 =>
-                        {
-                            b1.Property<Guid>("EventId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("VipPriceAmount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("nvarchar(3)")
-                                .HasColumnName("VipPriceCurrency");
-
-                            b1.HasKey("EventId");
-
-                            b1.ToTable("Events");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EventId");
-                        });
-
                     b.OwnsOne("Domain.Event.TimeRange", "Time", b1 =>
                         {
                             b1.Property<Guid>("EventId")
@@ -493,13 +443,8 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("EventId");
                         });
 
-                    b.Navigation("GeneralPrice")
-                        .IsRequired();
-
                     b.Navigation("Time")
                         .IsRequired();
-
-                    b.Navigation("VipPrice");
                 });
 
             modelBuilder.Entity("Domain.Host.Host", b =>

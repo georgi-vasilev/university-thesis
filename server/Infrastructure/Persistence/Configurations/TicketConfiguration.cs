@@ -28,11 +28,16 @@
             builder.OwnsOne(t => t.Price, m =>
             {
                 m.Property(x => x.Amount)
-                  .HasColumnName("PriceAmount");
+                 .HasColumnName("PriceAmount")
+                 .IsRequired();
+
                 m.Property(x => x.Currency)
-                  .HasColumnName("PriceCurrency")
-                  .HasMaxLength(3);
+                 .HasColumnName("PriceCurrency")
+                 .HasMaxLength(3)
+                 .IsRequired();
             });
+
+            builder.Navigation(t => t.Price).IsRequired();
 
             builder.Property(t => t.Type)
                    .IsRequired()

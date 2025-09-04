@@ -32,6 +32,7 @@
                     e.Id,
                     e.Name,
                     e.Description,
+                    e.ImageUrl,
                     e.Date,
                     e.Time,
                     e.Status.ToString()))

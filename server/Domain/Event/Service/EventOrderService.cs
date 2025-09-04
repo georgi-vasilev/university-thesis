@@ -129,31 +129,75 @@
             return Result.Success;
         }
 
-        public async Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId, CancellationToken cancellationToken)
+        public async Task<ErrorOr<Order>> CompleteOrderAsync(
+            Guid eventId,
+            Guid buyerId,
+            string transactionId,
+            string paymentIntentStatus,
+            long amount,
+            CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken);
+            var order = await _orderRepository.GetByTransactionIdAsync(transactionId, buyerId, cancellationToken);
             if (order is null)
             {
                 return OrderError.OrderNotFoundError;
             }
 
-            var completeResult = order.CompleteOrder();
-            if (completeResult.IsError)
+            if (order.Payment!.Status == PaymentStatus.Completed || order.Status == OrderStatus.Completed)
             {
-                return completeResult.FirstError;
+                return OrderError.OrderAlreadyCompletedError;
             }
 
-            await _orderRepository.UpdateAsync(order, cancellationToken);
+            if (!string.Equals(paymentIntentStatus, "succeeded", StringComparison.OrdinalIgnoreCase))
+            {
+                return OrderError.CannotChangeOrderStatusError;
+            }
 
-            // TODO: dispatch event
-            return Result.Success;
+            var expectedCents = (long)(order.Payment.Amount * 100m);
+            var actualCents = amount;
+
+            if (expectedCents != actualCents)
+            {
+
+                order.ChangeOrderStatus(OrderStatus.Cancelled);
+                await _orderRepository.UpdateAsync(order, cancellationToken);
+
+
+                return OrderError.UnexpectedError;
+            }
+
+            var @event = await _eventRepository.GetByIdAsync(eventId, cancellationToken);
+
+            if (@event is null)
+            {
+                return EventErrors.EventNotFoundError;
+            }
+
+            var venue = await _venueRepository.GetByIdAsync(@event.VenueId, cancellationToken);
+            var result = order.CompleteOrder();
+            if (result.IsError)
+            {
+                return result.FirstError;
+            }
+
+            try
+            {
+                await _orderRepository.UpdateAsync(order, cancellationToken);
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                return OrderError.UnexpectedError;
+            }
         }
 
 
         public async Task<ErrorOr<Success>> PurchaseTicketAsync(
             Guid buyerId,
             Guid eventId,
-            Money price,
+            string transactionId,
+            int quantity,
             TicketType type, 
             CancellationToken cancellationToken)
         {
@@ -162,51 +206,87 @@
             {
                 return EventErrors.EventNotFoundError;
             }
+            else if (@event.Status != EventStatus.Active)
+            {
+                return EventErrors.EventHasEndedOrCancelledError;
+            }
 
             var venue = await _venueRepository.GetByIdAsync(@event.VenueId, cancellationToken);
             if(venue is null)
             {
                 return VenueErrors.VenueNotFoundError;
-            }
-
-            if (@event.TicketCount >= venue.Capacity)
+            } 
+            else if (@event.TicketCount >= venue.Capacity)
             {
                 return EventErrors.NoTicketsLeftError;
             }
 
-            if(@event.Status != EventStatus.Active)
-            {
-                return EventErrors.EventHasEndedOrCancelledError;
-            }
+            var unitPrice = type == TicketType.VIP ? @event.VipPrice! : @event.GeneralPrice;
+            var total = new Money(unitPrice.Amount * quantity, unitPrice.Currency);
 
-
-            var orderBuild = _orderBuilder.WithBuyer(buyerId).Build();
+            var orderBuild = _orderBuilder
+                .WithBuyer(buyerId)
+                .WithEvent(eventId)
+                .WithTransaction(transactionId)
+                .Build();
             if (orderBuild.IsError)
             {
                 return orderBuild.FirstError;
             }
             var order = orderBuild.Value;
 
-            var ticketBuilderResult = _ticketBuilder
-                .WithEventId(eventId)
-                .WithPrice(price)
-                .WithType(type)
-                .Build();
-
-            if (ticketBuilderResult.IsError)
+            for (int i = 0; i < quantity; i++)
             {
-                return ticketBuilderResult.FirstError;
+                var perTicket = new Money(unitPrice.Amount, unitPrice.Currency);
+
+                var ticketResult = _ticketBuilder
+                    .WithEventId(eventId)
+                    .WithPrice(perTicket)
+                    .WithType(type)
+                    .Build();
+
+                if (ticketResult.IsError)
+                {
+                    return ticketResult.FirstError;
+                }
+
+                var ticketToAdd = ticketResult.Value;
+
+                var addToBuyer = ticketToAdd.AddToBuyer(buyerId);
+
+                if (addToBuyer.IsError)
+                {
+                    return addToBuyer.FirstError;
+                }
+
+                var addTicketResult = order.AddTicket(ticketToAdd);
+                if (addTicketResult.IsError)
+                {
+                    return addTicketResult.FirstError;
+                }
+
+                var addTicketToEventResult = @event.AddTicket(ticketToAdd.Id, venue.Capacity);
+                if (addTicketToEventResult.IsError)
+                {
+                    return addTicketToEventResult.FirstError;
+                }
             }
 
-            var ticket = ticketBuilderResult.Value;
 
-            var result = order.AddTicket(ticket);
-            if (result.IsError)
+            var paymentDetails = new PaymentDetails(
+                total.Amount,
+                "stripe",
+                PaymentStatus.Pending,
+                transactionId);
+
+            var updatePaymentResult = order.UpdatePaymentDetails(paymentDetails);
+            if (updatePaymentResult.IsError)
             {
-                return result.FirstError;
+                return updatePaymentResult.FirstError;
             }
 
-            await _orderRepository.UpdateAsync(order, cancellationToken);
+            await _orderRepository.AddAsync(order, cancellationToken);
+            await _eventRepository.UpdateAsync(@event, cancellationToken);
 
             // TODO: domain event
             return Result.Success;

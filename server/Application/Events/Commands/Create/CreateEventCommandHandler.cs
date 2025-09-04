@@ -90,10 +90,13 @@
             var eventBuildResult = _eventBuilder
                 .WithName(request.Name)
                 .WithDescription(request.Description)
+                .WithImageUrl(request.ImageUrl)
                 .WithDate(request.Date)
                 .WithTime(time)
                 .WithHostId(hostId)
                 .WithVenue(venue.Id)
+                .WithGeneralTicketPrice(request.GeneralTicketPrice)
+                .WithVipTicketPrice(request.VipTicketPrice)
                 .Build();
 
             if (eventBuildResult.IsError)

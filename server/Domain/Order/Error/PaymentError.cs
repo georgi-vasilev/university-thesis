@@ -19,5 +19,17 @@
         public static readonly Error PaymentStatusMismatchError = Error.Validation(
             code: "Payment.Complete",
             description: "Payment status is not completed!.");
+
+        public static Error PaymentProcessingError => Error.Failure(
+            code: "Payment.ProcessingFailed",
+            description: "Payment processing failed");
+
+        public static Error UnexpectedPaymentError => Error.Unexpected(
+            code: "Payment.UnexpectedError",
+            description: "An unexpected error occurred during payment processing");
+
+        public static Error PaymentNotFoundError => Error.NotFound(
+            code: "Payment.NotFound",
+            description: "Payment not found");
     }
 }

@@ -2,7 +2,6 @@
 {
     using Application.Common;
     using Application.Common.Contracts;
-    using Application.Services.Contracts.Payment;
     using Authentication;
     using Domain.Buyer.Repository;
     using Domain.Event.Repository;
@@ -19,7 +18,7 @@
     using Repositories;
     using Repositories.Event;
     using Repositories.Host;
-    using Services;
+    using Stripe;
     using System.Security.Claims;
     using System.Text;
 
@@ -32,6 +31,7 @@
             .AddDatabase(configuration)
             .AddRepositories()
             .AddAuth(configuration)
+            .AddStripeServices(configuration)
             .AddServices();
 
         private static IServiceCollection AddDatabase(
@@ -75,7 +75,8 @@
 
             var key = Encoding.UTF8.GetBytes(settings.Secret);
 
-            services.AddAuthentication(options => {
+            services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -122,8 +123,25 @@
 
         private static IServiceCollection AddServices(this IServiceCollection services)
             => services
-                .AddSingleton<IPaymentService, StripePaymentService>()
                 .AddScoped<IAuthenticationService, AuthenticationService>();
 
+        public static IServiceCollection AddStripeServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
+        {
+            var stripeSection = configuration.GetSection("Stripe");
+            var secretKey = stripeSection.GetValue<string>("SecretKey");
+
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new InvalidOperationException("Stripe SecretKey is required");
+            }
+
+            Stripe.StripeConfiguration.ApiKey = secretKey;
+
+            services.AddTransient<PaymentIntentService>();
+
+            return services;
+        }
     }
 }
