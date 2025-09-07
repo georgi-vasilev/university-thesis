@@ -10,6 +10,7 @@
             string description,
             string imageUrl,
             string venue,
+            Guid hostId,
             string hostInstagramHandler,
             DateOnly date,
             TimeRange time,
@@ -23,6 +24,7 @@
             Description = description;
             ImageUrl = imageUrl;
             Venue = venue;
+            HostId = hostId;
             HostInstagramHandler = hostInstagramHandler;
             Date = date;
             Time = time;
@@ -36,6 +38,7 @@
         public string Description { get; init; } = default!;
         public string ImageUrl { get; init; } = default!;
         public string Venue { get; set; } = default!;
+        public Guid HostId { get; set; }
         public string HostInstagramHandler { get; set; } = default!;
         public DateOnly Date { get; init; }
         public TimeRange Time { get; init; } = default!;
