@@ -47,7 +47,6 @@
 
             await _eventRepository.UpdateAsync(@event, cancellationToken);
 
-            //TODO: dispatch event
             return Result.Success;
         }
 
@@ -66,7 +65,6 @@
 
             await _eventRepository.AddAsync(@event, cancellationToken);
 
-            //TODO: Dispatch EventCreateEvent and handle it.
             await _hostRepository.UpdateAsync(host, cancellationToken);
 
             return Result.Success;

@@ -51,6 +51,17 @@
                   .HasColumnName("EndTime");
             });
 
+            builder.OwnsOne(e => e.GeneralPrice, m =>
+            {
+                m.Property(p => p.Amount).HasColumnName("GeneralPriceAmount");
+                m.Property(p => p.Currency).HasColumnName("GeneralPriceCurrency").HasMaxLength(3);
+            });
+            builder.OwnsOne(e => e.VipPrice, m =>
+            {
+                m.Property(p => p.Amount).HasColumnName("VipPriceAmount");
+                m.Property(p => p.Currency).HasColumnName("VipPriceCurrency").HasMaxLength(3);
+            });
+
             builder.Ignore(e => e.DomainEvents);
         }
     }

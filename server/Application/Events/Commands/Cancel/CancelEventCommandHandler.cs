@@ -21,7 +21,6 @@
 
         public CancelEventCommandHandler(
             IHostDomainRepository repository,
-            IEventDomainRepository eventRepository,
             ILogger<CancelEventCommandHandler> logger,
             ICurrentUser currentUser,
             IEventHostService eventHostService)

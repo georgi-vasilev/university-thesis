@@ -6,9 +6,9 @@
     {
         public OrderCompleteCommandValidator()
         {
-            RuleFor(c => c.OrderId)
+            RuleFor(c => c.TranscationId)
                 .NotEmpty()
-                    .WithMessage("Order ID must be provided.");
+                    .WithMessage("Transcation ID must be provided.");
         }
     }
 }

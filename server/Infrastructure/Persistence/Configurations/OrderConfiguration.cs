@@ -41,6 +41,11 @@
                 pd.Property(p => p.Status)
                   .HasColumnName("PaymentStatus")
                   .HasConversion<string>();
+
+                pd.HasIndex(p => p.TransactionId)
+                  .IsUnique()
+                  .HasFilter("[TransactionId] IS NOT NULL")
+                  .HasDatabaseName("UX_Orders_TransactionId");
             });
 
             builder.HasMany(o => o.Tickets)

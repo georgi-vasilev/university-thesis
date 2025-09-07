@@ -50,11 +50,14 @@
                 e.Id,
                 e.Name,
                 e.Description,
+                e.ImageUrl,
                 v.Name,
                 h.Id,
                 h.ContactInfo.InstagramHandler,
                 e.Date,
                 e.Time,
+                e.GeneralPrice.Amount,
+                e.VipPrice.Amount,
                 e.Status.ToString(),
                 v.Capacity - e.TicketCount
                 )).FirstOrDefaultAsync(cancelletionToken);
@@ -94,6 +97,7 @@
                     e.Id,
                     e.Name,
                     e.Description,
+                    e.ImageUrl,
                     e.Date,
                     e.Time,
                     e.Status.ToString()))
@@ -121,6 +125,7 @@
               e.Id,
               e.Name,
               e.Description,
+              e.ImageUrl,
               e.Date,
               e.Time,
               e.Status.ToString()

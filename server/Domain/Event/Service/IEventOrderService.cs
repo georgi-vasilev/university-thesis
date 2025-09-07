@@ -1,7 +1,6 @@
 ﻿namespace Domain.Event.Service
 {
     using Common;
-    using Common.ValueObject;
     using ErrorOr;
     using Host;
     using Order;
@@ -13,7 +12,8 @@
         Task<ErrorOr<Success>> PurchaseTicketAsync(
             Guid buyerId,
             Guid eventId,
-            Money price,
+            string transactionId,
+            int quantity,
             TicketType type,
             CancellationToken cancellationToken);
 
@@ -22,7 +22,13 @@
             Guid ticketId,
             CancellationToken cancellationToken);
 
-        Task<ErrorOr<Success>> CompleteOrderAsync(Guid orderId, CancellationToken cancellationToken);
+        Task<ErrorOr<Order>> CompleteOrderAsync(
+            Guid orderId,
+            Guid buyerId,
+            string transactionId,
+            string paymentIntentStatus,
+            long amount,
+            CancellationToken cancellationToken);
 
         Task<ErrorOr<Success>> UpdateEventDetailsAsync(Host host, Event updatedEvent, CancellationToken cancellationToken);
 

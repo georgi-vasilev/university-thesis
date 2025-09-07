@@ -20,7 +20,7 @@ namespace Startup
                 .AddWebComponents()
                 .AddSwaggerGen(options =>
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Event Manager", Version = "v1" });
 
                     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                     {
