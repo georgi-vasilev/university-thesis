@@ -24,6 +24,7 @@
                 .Where(h => h.Id == hostId)
                 .Select(h => new
                 {
+                    h.Id,
                     h.ContactInfo.FullName,
                     h.ContactInfo.Email,
                     h.ContactInfo.InstagramHandler
@@ -43,6 +44,7 @@
                     e.Name,
                     e.Description,
                     v.Name,
+                    hostDto.Id,
                     hostDto.FullName,
                     e.Date,
                     e.Time,

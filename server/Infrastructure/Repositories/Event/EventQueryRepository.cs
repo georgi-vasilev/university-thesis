@@ -51,6 +51,7 @@
                 e.Name,
                 e.Description,
                 v.Name,
+                h.Id,
                 h.ContactInfo.InstagramHandler,
                 e.Date,
                 e.Time,
