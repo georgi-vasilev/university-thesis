@@ -22,5 +22,8 @@
 
         public async Task<Buyer?> GetByEmailAsync(string email, CancellationToken cancellationToken) 
             => await _context.Buyers.FirstOrDefaultAsync(b => b.Email == email, cancellationToken);
+
+        public async Task<Buyer?> GetUserByIdAsync(Guid buyerId, CancellationToken cancellationToken)
+            => await _context.Buyers.FirstOrDefaultAsync(b => b.Id == buyerId, cancellationToken);
     }
 }
