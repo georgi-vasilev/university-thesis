@@ -11,6 +11,10 @@
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string Email { get; private set; }
+        public string FullName
+        {
+            get => $"{FirstName} {LastName}";
+        }
         public IReadOnlyCollection<Guid> OrderIds { get => _orderIds; }
 
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;

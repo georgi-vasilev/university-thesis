@@ -47,7 +47,7 @@
                 var stripeEvent = EventUtility.ConstructEvent(
                     json,
                     stripeSignature,
-                    _webhookSecret);
+                    _webhookSecret, tolerance: 3000);
 
                 _logger.LogInformation("Received Stripe webhook: {EventType} for {ObjectId}",
                     stripeEvent.Type, stripeEvent.Id);

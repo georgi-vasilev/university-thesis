@@ -2,6 +2,7 @@
 {
     using Domain.Event.Error;
     using ErrorOr;
+    using System.Globalization;
 
     public class TimeRange
     {
@@ -60,6 +61,13 @@
         public static bool operator !=(TimeRange left, TimeRange right)
         {
             return !(left == right);
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            var fmt = string.IsNullOrWhiteSpace(format) ? "yyyy-MM-dd HH:mm" : format;
+            var provider = formatProvider ?? CultureInfo.InvariantCulture;
+            return string.Format(provider, "{0:" + fmt + "} – {1:" + fmt + "}", Start, End);
         }
     }
 

@@ -2,12 +2,16 @@
 {
     using Application.Common;
     using Application.Common.Contracts;
+    using Application.Services.Contracts.Email;
+    using Application.Services.Contracts.QRCode;
+    using Application.Services.Contracts.User;
     using Authentication;
     using Domain.Buyer.Repository;
     using Domain.Event.Repository;
     using Domain.Host.Repository;
     using Domain.Order.Repository;
     using Domain.Venue.Repository;
+    using Infrastructure.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -18,6 +22,7 @@
     using Repositories;
     using Repositories.Event;
     using Repositories.Host;
+    using SendGrid;
     using Stripe;
     using System.Security.Claims;
     using System.Text;
@@ -32,6 +37,7 @@
             .AddRepositories()
             .AddAuth(configuration)
             .AddStripeServices(configuration)
+            .AddSendGridClient(configuration)
             .AddServices();
 
         private static IServiceCollection AddDatabase(
@@ -55,7 +61,8 @@
                 .AddScoped<IVenueDomainRepository, VenueRepository>()
                 .AddScoped<IBuyerDomainRepository, BuyerRepository>()
                 .AddScoped<IEventQueryRepository, EventQueryRepository>()
-                .AddScoped<IHostQueryRepository, HostQueryRepository>();
+                .AddScoped<IHostQueryRepository, HostQueryRepository>()
+                .AddScoped<IBuyerService, BuyerService>();
 
         private static IServiceCollection AddAuth(
             this IServiceCollection services,
@@ -123,11 +130,13 @@
 
         private static IServiceCollection AddServices(this IServiceCollection services)
             => services
-                .AddScoped<IAuthenticationService, AuthenticationService>();
+                .AddScoped<IAuthenticationService, AuthenticationService>()
+                .AddScoped<IEmailService, SendGridEmailService>()
+                .AddScoped<IQRCodeService, QRCodeService>();
 
         public static IServiceCollection AddStripeServices(
-        this IServiceCollection services,
-        IConfiguration configuration)
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
             var stripeSection = configuration.GetSection("Stripe");
             var secretKey = stripeSection.GetValue<string>("SecretKey");
@@ -143,5 +152,22 @@
 
             return services;
         }
+
+        public static IServiceCollection AddSendGridClient(
+            this IServiceCollection services,
+            IConfiguration configuration) =>
+            services.AddSingleton<ISendGridClient>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                var apiKey = configuration["SendGrid:ApiKey"];
+                var options = new SendGridClientOptions
+                {
+                    ApiKey = apiKey
+                };
+                options.SetDataResidency("eu");
+
+                var client = new SendGridClient(options);
+                return new SendGridClient(apiKey);
+            });
     }
 }
